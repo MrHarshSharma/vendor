@@ -27,6 +27,7 @@ const ReviewMenu = () => {
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   let user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
@@ -68,6 +69,7 @@ const ReviewMenu = () => {
 
 
   const placeOrder = async () => {
+    let user = JSON.parse(localStorage.getItem("user"));
     setLoading(true);
    try {
     
@@ -123,6 +125,7 @@ const ReviewMenu = () => {
      
       localStorage.setItem('token',result.user.accessToken)
       localStorage.setItem('user',JSON.stringify(userData))
+      
       placeOrder()
       console.log("User signed in:", user);
       return user;
