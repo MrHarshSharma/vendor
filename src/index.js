@@ -1,13 +1,49 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import Dashboard from "./pages/Dashboard";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  RouterProvider,
+  Route,
+} from "react-router-dom";
+import { ConfigProvider } from "antd";
+import MobileNumberLogin from "./pages/MobileNumberLogin";
+import Protected from "./components/Protected";
+import Menu from "./pages/Menu";
+import { Provider } from "react-redux";
+import store from "./store";
+import ReviewMenu from "./pages/ReviewMenu";
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<App />}>
+      <Route path="/menu/:storeId" element={<Menu />} />
+      <Route path="/review/:storeId" element={<ReviewMenu />} />
+      {/*
+      <Route path="/" element={<Protected />}>
+        <Route path="/" index element={<Dashboard />} />
+        <Route path="profile" index element={<Profile />} />
+        <Route path="menu" index element={<MenuPage />} />
+  </Route>
+  
+  <Route path="login" element={<MobileNumberLogin />} />
+*/}
+    </Route>
+  )
+);
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <ConfigProvider theme={{ token: { colorPrimary: "#00b96b" } }}>
+        <RouterProvider router={router} />
+      </ConfigProvider>
+    </Provider>
   </React.StrictMode>
 );
 
