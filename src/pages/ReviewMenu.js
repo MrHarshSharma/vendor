@@ -105,8 +105,8 @@ const ReviewMenu = () => {
   const signInWithGoogle = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      const userRef = doc(db, 'customer', `customer_${Date.now()}`);
+      const user = await result.user;
+      const userRef = await doc(db, 'customer', `customer_${Date.now()}`);
       
       // const docSnap = await getDoc(userRef);
       
