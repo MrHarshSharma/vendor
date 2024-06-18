@@ -23,6 +23,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
       <Route path="/menu/:storeId" element={<Menu />} />
+      <Route path="/" element={<Dashboard />} />
       <Route path="/review/:storeId" element={<ReviewMenu />} />
       {/*
       <Route path="/" element={<Protected />}>
