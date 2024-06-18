@@ -114,7 +114,9 @@ function Menu() {
                       >
                         <div className="menu-items">
                           {menuItem.map((item) => (
-                            <div key={item.name} className="menu-item">
+                            <>
+                            {item.available && (
+                             <div key={item.name} className="menu-item">
                               <div className="menu-item-header">
                                 <span>{item.name}</span>
                                 <span>
@@ -130,6 +132,9 @@ function Menu() {
                               </div>
                               <span className="menu-item-description">{item.description}</span>
                             </div>
+                            )}
+                           
+                            </>
                           ))}
                         </div>
                       </Card>
