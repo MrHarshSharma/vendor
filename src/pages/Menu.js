@@ -71,6 +71,7 @@ function Menu() {
   return (
     <AppLayout>
       <div className="profile-container">
+      <div>menu </div>
         {storeDetails !== null ? (
           <div  className="menu-container">
             <div id='myElement' className="menu-info" style={{ backgroundColor: storeDetails.primaryColor }}>
