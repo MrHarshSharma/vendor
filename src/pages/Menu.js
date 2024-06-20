@@ -204,13 +204,13 @@ function Menu() {
                                       <span style={{color:storeDetails.primaryColor}}>
                                       {item.price} Rs
                                       </span>
-                                      <span style={{backgroundColor:hexToRgba(storeDetails.secondaryColor),  padding:'2px 5px', borderRadius:'5px'}}>
-                                      <PlusCircleOutlined
-                                      style={{ color: "green", cursor: "pointer", }}
-                                      onClick={() => {
+                                      <span  onClick={() => {
                                         handleAddToCart(item);
                                         message.success(`${item.name} added to cart`);
-                                        }}
+                                        }} style={{backgroundColor:hexToRgba(storeDetails.secondaryColor),  padding:'2px 5px', borderRadius:'5px'}}>
+                                      <PlusCircleOutlined
+                                      style={{ color: "green", cursor: "pointer", }}
+                                     
                                         />
                                         Add
                                         </span>
