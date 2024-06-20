@@ -88,9 +88,10 @@
 
 .profile-container {
   display: flex;
-  justify-content: center;
+  /* justify-content: center; */
   flex-direction: column;
   padding: 10px;
+  height: 98vh;
 }
 
 .menu-container {
@@ -143,7 +144,7 @@
 }
 
 .menu-category {
-  min-width: 80%;
+  min-width: 100%;
   /* padding: 20px; */
   border-radius: 10px;
   display: flex;
@@ -162,7 +163,7 @@
   flex-direction: row;
   gap: 5px;
   flex-wrap: wrap;
-  height: 75vh;
+  height: 80vh;
     overflow: auto;
     padding: 5px;
 }
@@ -178,8 +179,8 @@
   border-radius: 5px;
   width: 45%;
   padding: 5px;
-  height: fit-content;
-  flex:1;
+  height: auto;
+  align-self: flex-start;
 }
 
 .menu-item-description {
@@ -188,7 +189,7 @@
 
 .cart-summary {
   position: absolute;
-  bottom: 0;
+  bottom: 10px;
   width: 90%;
   margin: 10px;
   border-radius: 5px;
