@@ -20,10 +20,10 @@ function Menu() {
     beverage: [],
   };
 
-  const cart = useSelector(state => state.cart);
+  const cart = useSelector((state) => state.cart);
   useEffect(() => {
-    console.log(cart)
-  },[cart])
+    console.log(cart);
+  }, [cart]);
   const [storeDetails, setStoreDetails] = useState(null);
   const fetchConfigstore = async () => {
     try {
@@ -51,8 +51,6 @@ function Menu() {
     }
   }, [storeDetails]);
 
- 
-
   const handleAddToCart = (item) => {
     dispatch(addToCart(item));
   };
@@ -68,28 +66,87 @@ function Menu() {
     }
   };
 
+  const hexToRgba = (hex, alpha = 0.5) => {
+    if (!hex) {
+      return "";
+    }
+    let r = 0,
+      g = 0,
+      b = 0;
+
+    // Check if hex value is in the shorthand format (e.g. #03F)
+    if (hex.length === 4) {
+      r = parseInt(hex[1] + hex[1], 16);
+      g = parseInt(hex[2] + hex[2], 16);
+      b = parseInt(hex[3] + hex[3], 16);
+    } else if (hex.length === 7) {
+      r = parseInt(hex[1] + hex[2], 16);
+      g = parseInt(hex[3] + hex[4], 16);
+      b = parseInt(hex[5] + hex[6], 16);
+    }
+
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+
   return (
     <AppLayout>
-      <div className="profile-container">
-      
+      <div
+        className="profile-container"
+        style={{ background: hexToRgba(storeDetails?.secondaryColor) }}
+      >
         {storeDetails !== null ? (
-          <div  className="menu-container">
-            <div id='myElement' className="menu-info" style={{ backgroundColor: storeDetails.primaryColor }}>
-              <span className="restaurant-name">{storeDetails.restaurantName}</span>
-              <hr className="separator" style={{ backgroundColor: storeDetails?.secondaryColor, marginTop:'auto' }} />
-              <span className="menu-title" style={{ color: storeDetails.secondaryColor }}>MENU</span>
-              <span className="restaurant-type">{storeDetails.restaurantType}</span>
-              <hr className="separator" style={{ backgroundColor: storeDetails?.secondaryColor }} />
-              <span className="tagline">{storeDetails.tagline} at {storeDetails.restaurantName}</span>
-              <span className="subtagline" >{storeDetails.subtagline}</span>
+          <div className="menu-container">
+            <div
+              id="myElement"
+              className="menu-info"
+              style={{ backgroundColor: storeDetails.primaryColor }}
+            >
+              <img
+                src={storeDetails.logo}
+                style={{ width: "100px", height: "100px" }}
+              />
+              <span className="restaurant-name">
+                {storeDetails.restaurantName}
+              </span>
+              <hr
+                className="separator"
+                style={{
+                  backgroundColor: storeDetails?.secondaryColor,
+                  marginTop: "auto",
+                }}
+              />
+              <span
+                className="menu-title"
+                style={{ color: storeDetails.secondaryColor }}
+              >
+                MENU
+              </span>
+              <span
+                className="restaurant-type"
+                style={{ textTransform: "capitalize" }}
+              >
+                {storeDetails.restaurantType}
+              </span>
+              <hr
+                className="separator"
+                style={{ backgroundColor: storeDetails?.secondaryColor }}
+              />
+              <span className="tagline">
+                {storeDetails.tagline} at {storeDetails.restaurantName}
+              </span>
+              <span className="subtagline">{storeDetails.subtagline}</span>
               <div className="menu-categories">
                 we offer{" "}
                 {Object.keys(storeDetails.menu).map((category, i) => (
                   <span key={category} className="category-item">
-                    <span onClick={() => scrollToSection(category)} className="category-link">
+                    <span
+                      onClick={() => scrollToSection(category)}
+                      className="category-link"
+                      style={{ textTransform: "capitalize" }}
+                    >
                       {category}
                     </span>
-                    {Object.keys(storeDetails.menu).length - 2 > i && ","}
+                    {Object.keys(storeDetails.menu).length - 2 > i && ", "}
                     {Object.keys(storeDetails.menu).length - 2 == i && " and "}
                   </span>
                 ))}
@@ -104,39 +161,68 @@ function Menu() {
                 const menuItem = storeDetails.menu[category];
                 return (
                   menuItem.length > 0 && (
-                    <div className="menu-category" style={{ backgroundColor: storeDetails.primaryColor }}>
+                    <div
+                      className="menu-category"
+                      style={{ backgroundColor: "#fff" }}
+                    >
                       <Card
                         id={category}
-                        title={category.charAt(0).toUpperCase() + category.slice(1)}
+                        title={
+                          category.charAt(0).toUpperCase() + category.slice(1)
+                        }
                         key={category}
                         className="menu-card"
-                        style={{ backgroundColor: storeDetails.secondaryColor }}
+                        // style={{ backgroundColor: storeDetails.secondaryColor }}
                       >
+                     
                         <div className="menu-items">
                           {menuItem.map((item) => (
                             <>
-                            {item.available && (
-                             <div key={item.name} className="menu-item">
-                              <div className="menu-item-header">
-                                <span>{item.name}</span>
-                                <span>
-                                  {item.price} Rs
-                                  <PlusCircleOutlined
-                                    style={{ color: "green", cursor: "pointer", marginLeft: "10px" }}
-                                    onClick={() => {
-                                      handleAddToCart(item);
-                                      message.success(`${item.name} added to cart`);
-                                    }}
-                                  />
-                                </span>
-                              </div>
-                              <span className="menu-item-description">{item.description}</span>
-                            </div>
-                            )}
-                           
+                              {item.available && (
+                                <div className='item-menu'>
+                                  <div style={{textAlign:'center'}}>
+                                    <img
+                                      src={item.imageUrl}
+                                      style={{
+                                        width: "70px",
+                                        borderRadius: "5px",
+                                      }}
+                                    />
+                                  </div>
+                                  <div key={item.name} className="menu-item">
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                      }}
+                                    >
+                                      <span style={{color:storeDetails.primaryColor}} >{item.name}</span>
+                                      <span style={{color:storeDetails.primaryColor}} className="menu-item-description">
+                                        {item.description}
+                                      </span>
+                                      <div style={{ marginTop: "10px",display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
+                                      <span style={{color:storeDetails.primaryColor}}>
+                                      {item.price} Rs
+                                      </span>
+                                      <span style={{backgroundColor:hexToRgba(storeDetails.secondaryColor),  padding:'2px 5px', borderRadius:'5px'}}>
+                                      <PlusCircleOutlined
+                                      style={{ color: "green", cursor: "pointer", }}
+                                      onClick={() => {
+                                        handleAddToCart(item);
+                                        message.success(`${item.name} added to cart`);
+                                        }}
+                                        />
+                                        Add
+                                        </span>
+                                        </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
                             </>
                           ))}
                         </div>
+                       
                       </Card>
                     </div>
                   )

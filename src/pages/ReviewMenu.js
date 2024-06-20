@@ -159,16 +159,19 @@ const ReviewMenu = () => {
                 {item.quantity}*{item.price} = {item.price * item.quantity}Rs
               </span>
             </div>
-            <div style={{display:'flex', justifyContent:'space-between'}}>
+            <div style={{display:'flex', justifyContent:'space-between', marginBottom:'10px'}}>
               <span>{item.description}</span>
-              <div style={{display:'flex', gap:'5px'}}>
+              <div style={{display:'flex', gap:'10px',  marginTop:'10px'}}>
+              {item.quantity>1&&(
+                <span onClick={() => dispatch(decrementQuantity(item.name))}>
+                <MinusCircleOutlined />
+              </span>
+              )}
                 <span onClick={() => dispatch(incrementQuantity(item.name))}>
                   <PlusCircleOutlined />
                 </span>
 
-                <span onClick={() => dispatch(decrementQuantity(item.name))}>
-                  <MinusCircleOutlined />
-                </span>
+               
 
                 <span onClick={() => dispatch(removeFromCart(item.name))}>
                   <DeleteOutlined />
