@@ -5,6 +5,7 @@
 body {
     font-family: "Mitr", sans-serif !important;
     margin: 0;
+    overflow: hidden;
   } 
 
 .app-extralight {
