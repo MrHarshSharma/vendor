@@ -10,7 +10,6 @@
     "antd-img-crop": "^4.22.0",
     "firebase": "^10.11.1",
     "firebase-tools": "^13.11.2",
-    "fsevents": "^2.3.3",
     "gh-pages": "^6.1.1",
     "react": "^18.3.1",
     "react-color": "^2.19.3",
