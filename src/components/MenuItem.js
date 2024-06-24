@@ -20,6 +20,7 @@ const dispatch = useDispatch();
           <div style={{ display: 'flex', overflowX: 'auto', whiteSpace: 'nowrap' }}>
           
             {allIngridents.map((element, index) => (
+              
               <span className="smallFont" key={index} style={{ }}>
                 {element},
               </span>
