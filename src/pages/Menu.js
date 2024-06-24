@@ -6,9 +6,12 @@ import { db } from "../firebase/setup";
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "../actions/cartActions";
-import { DOMContentLoaded } from "../constants/commonFunctions";
+
+import { DOMContentLoaded, hexToRgba } from "../constants/commonFunctions";
 // import "./Menu.css";  // Assuming you create a Menu.css file for custom styles
+
+import MenuItem from "../components/MenuItem";
+import { addStore } from "../actions/storeActions";
 
 function Menu() {
   const { storeId } = useParams();
@@ -20,11 +23,14 @@ function Menu() {
     beverage: [],
   };
 
-  const cart = useSelector((state) => state.cart);
+  const cart = useSelector((state) => state.cartReducer.cart);
   useEffect(() => {
     console.log(cart);
   }, [cart]);
+
+  
   const [storeDetails, setStoreDetails] = useState(null);
+
   const fetchConfigstore = async () => {
     try {
       const configRef = doc(db, "configstore", storeId);
@@ -33,6 +39,7 @@ function Menu() {
       if (docSnap.exists()) {
         console.log("this user data", docSnap.data());
         setStoreDetails(docSnap.data());
+        dispatch(addStore(docSnap.data()));
       } else {
         console.log("No such document!");
       }
@@ -51,9 +58,7 @@ function Menu() {
     }
   }, [storeDetails]);
 
-  const handleAddToCart = (item) => {
-    dispatch(addToCart(item));
-  };
+  
 
   const scrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
@@ -66,28 +71,7 @@ function Menu() {
     }
   };
 
-  const hexToRgba = (hex, alpha = 0.5) => {
-    if (!hex) {
-      return "";
-    }
-    let r = 0,
-      g = 0,
-      b = 0;
-
-    // Check if hex value is in the shorthand format (e.g. #03F)
-    if (hex.length === 4) {
-      r = parseInt(hex[1] + hex[1], 16);
-      g = parseInt(hex[2] + hex[2], 16);
-      b = parseInt(hex[3] + hex[3], 16);
-    } else if (hex.length === 7) {
-      r = parseInt(hex[1] + hex[2], 16);
-      g = parseInt(hex[3] + hex[4], 16);
-      b = parseInt(hex[5] + hex[6], 16);
-    }
-
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-  };
-
+ 
   return (
     <AppLayout>
       <div
@@ -179,45 +163,7 @@ function Menu() {
                           {menuItem.map((item) => (
                             <>
                               {item.available && (
-                                <div className='item-menu'>
-                                  <div style={{textAlign:'center'}}>
-                                    <img
-                                      src={item.imageUrl}
-                                      style={{
-                                        width: "70px",
-                                        borderRadius: "5px",
-                                      }}
-                                    />
-                                  </div>
-                                  <div key={item.name} className="menu-item">
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                        flexDirection: "column",
-                                      }}
-                                    >
-                                      <span style={{color:storeDetails.primaryColor}} >{item.name}</span>
-                                      <span style={{color:storeDetails.primaryColor}} className="menu-item-description">
-                                        {item.description}
-                                      </span>
-                                      <div style={{ marginTop: "10px",display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
-                                      <span style={{color:storeDetails.primaryColor}}>
-                                      {item.price} Rs
-                                      </span>
-                                      <span  onClick={() => {
-                                        handleAddToCart(item);
-                                        message.success(`${item.name} added to cart`);
-                                        }} style={{backgroundColor:hexToRgba(storeDetails.secondaryColor),  padding:'2px 5px', borderRadius:'5px'}}>
-                                      <PlusCircleOutlined
-                                      style={{ color: "green", cursor: "pointer", }}
-                                     
-                                        />
-                                        Add
-                                        </span>
-                                        </div>
-                                    </div>
-                                  </div>
-                                </div>
+                                <MenuItem item={item} inCart={false} storeDetails={storeDetails}/>
                               )}
                             </>
                           ))}
@@ -233,7 +179,7 @@ function Menu() {
           <span>Store not configured yet</span>
         )}
 
-        {cart.length > 0 && (
+        {cart?.length > 0 && (
           <div
             onClick={() => {
               navigate(`/review/${storeId}`);
@@ -241,7 +187,9 @@ function Menu() {
             className="cart-summary"
             style={{ backgroundColor: storeDetails?.secondaryColor }}
           >
-            <span>View and confirm order ({cart.length} items)</span>
+            <span>View and confirm order ({cart.reduce((accumulator, item) => {
+              return accumulator + item.quantity;
+            }, 0)} items)</span>
             <span className="cart-summary-icon">
               <RightCircleOutlined />
             </span>
