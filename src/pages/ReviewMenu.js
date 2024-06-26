@@ -13,15 +13,10 @@ import { LiaRupeeSignSolid } from "react-icons/lia";
 
 import {
   clearCart,
-  decrementQuantity,
-  incrementQuantity,
-  removeFromCart,
+ 
 } from "../actions/cartActions";
 import {
-  PlusCircleOutlined,
-  MinusCircleOutlined,
-  DeleteOutlined,
-  LeftCircleOutlined,
+    LeftCircleOutlined,
 } from "@ant-design/icons";
 // import { doc, getDoc, setDoc } from "firebase/firestore";
 // import { db } from "../firebase/setup";
@@ -30,6 +25,7 @@ import { DOMContentLoaded, renderIngridents } from "../constants/commonFunctions
 import { BiDish } from "react-icons/bi";
 import { MdOutlineTimer } from "react-icons/md";
 import { GiCampCookingPot } from "react-icons/gi";
+import CartActionButtons from "../components/CartActionButtons";
 
 const ReviewMenu = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
@@ -195,29 +191,7 @@ const ReviewMenu = () => {
               }}
             >
              
-              <div style={{ display: "flex", gap: "10px", flexDirection:'column', justifyContent:'end' }}>
-              <div style={{display: "flex", gap: "5px", flexDirection:'row'}}>
-              {item.quantity > 1 && (
-                <span  onClick={() => dispatch(decrementQuantity(item.name))}>
-                <MinusCircleOutlined className='smallFont' />
-                </span>
-                )}
-                <span className='smallFont'>
-                Qty: {item.quantity}
-                </span>
-                <span onClick={() => dispatch(incrementQuantity(item.name))}>
-                <PlusCircleOutlined className='smallFont' />
-                </span>
-                </div>
-
-                <div >
-                
-                <span className='smallFont' style={{display:'flex', alignItems:'center', gap:'5px'}} onClick={() => dispatch(removeFromCart(item.name))}>
-                <DeleteOutlined className='smallFont' />
-                Remove
-                </span>
-                </div>
-              </div>
+             <CartActionButtons item={item} />
             </div>
           </div>
         ))}

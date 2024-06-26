@@ -1,20 +1,52 @@
-import React from "react";
-import { addToCart } from "../actions/cartActions";
-import { useDispatch } from "react-redux";
+import React, { useEffect } from "react";
+import { addToCart, decrementQuantity, incrementQuantity, removeFromCart } from "../actions/cartActions";
+import { useDispatch, useSelector } from "react-redux";
 import {message} from 'antd'
 import { LiaRupeeSignSolid } from "react-icons/lia";
 import { hexToRgba, renderIngridents } from "../constants/commonFunctions";
 import { BiDish } from "react-icons/bi";
 import { MdOutlineTimer } from "react-icons/md";
 import { GiCampCookingPot } from "react-icons/gi";
+import {
+  PlusCircleOutlined,
+  MinusCircleOutlined,
+  DeleteOutlined,
+  LeftCircleOutlined,
+} from "@ant-design/icons";
+import CartActionButtons from "./CartActionButtons";
 
 const MenuItem = ({ item, inCart, storeDetails }) => {
 const dispatch = useDispatch();
     const handleAddToCart = (item) => {
         dispatch(addToCart(item));
       };
-
-     
+      const cart = useSelector(state => state.cartReducer.cart);
+      useEffect(() =>{
+        console.log(cart)
+      },[])
+     const renderTheButtonAction = (itemName) =>{
+   
+      let isPresent = cart.filter(cartItem=>cartItem.name === itemName)[0];
+      if(isPresent){
+        return (
+              <CartActionButtons item={isPresent} />
+        )
+      }else{
+        return (   <span
+          onClick={() => {
+            handleAddToCart(item);
+            // message.success(`${item.name} added to cart`);
+          }}
+          style={{
+            backgroundColor: hexToRgba(storeDetails?.secondaryColor),
+            padding: "2px 5px",
+            borderRadius: "5px",
+          }}
+        >
+        Add
+        </span>)
+      }
+     }
 
   return (
     <div className="item-menu" style={{flex:1}}>
@@ -80,20 +112,11 @@ const dispatch = useDispatch();
         />
 )}
       
-        {!inCart && ( <span
-          onClick={() => {
-            handleAddToCart(item);
-            message.success(`${item.name} added to cart`);
-          }}
-          style={{
-            backgroundColor: hexToRgba(storeDetails?.secondaryColor),
-            padding: "2px 5px",
-            borderRadius: "5px",
-          }}
-        >
-         
-          Add
-        </span>)}
+        {!inCart && ( 
+          <>
+          {renderTheButtonAction(item.name)}
+          </>   
+        )}
       </div>
 
     </div>
