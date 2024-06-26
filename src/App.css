@@ -96,7 +96,7 @@
   /* justify-content: center; */
   flex-direction: column;
   padding: 10px;
-  height: 97vh;
+  height: 90vh;
 }
 
 .menu-container {
@@ -201,8 +201,9 @@
 }
 .cart-summary {
   position: absolute;
-  bottom: 10px;
-  width: 90%;
+  /* bottom: 10px; */
+  right: 10px;
+  width: auto;
   margin: 10px;
   border-radius: 5px;
   padding: 10px;
@@ -228,7 +229,7 @@
   }
 
   .cart-summary {
-    width: 90%;
+    width: auto;
     margin: 0;
     padding: 10px;
   }

@@ -189,18 +189,18 @@ function Menu() {
               navigate(`/review/${storeId}`);
             }}
             className="cart-summary"
-            style={{ backgroundColor: storeDetails?.secondaryColor }}
+            style={{ backgroundColor: storeDetails?.secondaryColor, border: `1px solid ${storeDetails?.primaryColor}`}}
           >
             <span>
-              View and confirm order (
+             Confirm order (
               {cart.reduce((accumulator, item) => {
                 return accumulator + item.quantity;
               }, 0)}{" "}
               items)
             </span>
-            <span className="cart-summary-icon">
+           {/* <span className="cart-summary-icon">
               <RightCircleOutlined />
-            </span>
+            </span>*/}
           </div>
         )}
       </div>
