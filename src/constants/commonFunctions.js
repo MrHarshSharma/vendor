@@ -45,11 +45,18 @@ function hexToRgb(hex) {
     const hexColor = rgbToHex(bgColor);
     const isDark = isColorDark(hexColor);
     element.style.color = isDark ? "#FFFFFF" : "#000000";
+
+    const catBtn = document.getElementsByClassName('category-link');
+    for (let i = 0;i<catBtn.length;i++){
+      catBtn[i].style.color = isDark ? "#FFFFFF" : "#000000"; // Change this value for testing
+
+    }
   }
 
   export const DOMContentLoaded = (color) => {
     const element = document.getElementById("myElement");
     // Set a background color for testing
+    
     element.style.backgroundColor = color // Change this value for testing
     setTextColorBasedOnBg(element);
   };
@@ -76,7 +83,7 @@ function hexToRgb(hex) {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   };
 
-  
+
   export const renderIngridents = (ingridents) => {
     let allIngridents = ingridents.split(',');
     return (

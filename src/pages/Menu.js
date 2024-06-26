@@ -28,7 +28,6 @@ function Menu() {
     console.log(cart);
   }, [cart]);
 
-  
   const [storeDetails, setStoreDetails] = useState(null);
 
   const fetchConfigstore = async () => {
@@ -58,8 +57,6 @@ function Menu() {
     }
   }, [storeDetails]);
 
-  
-
   const scrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
     if (section) {
@@ -71,7 +68,6 @@ function Menu() {
     }
   };
 
- 
   return (
     <AppLayout>
       <div
@@ -123,13 +119,19 @@ function Menu() {
                 we offer{" "}
                 {Object.keys(storeDetails.menu).map((category, i) => (
                   <span key={category} className="category-item">
-                    <u
+                    <button
                       onClick={() => scrollToSection(category)}
                       className="category-link"
-                      style={{ textTransform: "capitalize" }}
+                      style={{
+                        textTransform: "capitalize",
+                        background: "transparent",
+                        border: "none",
+                        borderBottom: "1px solid",
+                        
+                      }}
                     >
                       {category}
-                    </u>
+                    </button>
                     {Object.keys(storeDetails.menu).length - 2 > i && ", "}
                     {Object.keys(storeDetails.menu).length - 2 == i && " and "}
                   </span>
@@ -158,17 +160,19 @@ function Menu() {
                         className="menu-card"
                         // style={{ backgroundColor: storeDetails.secondaryColor }}
                       >
-                     
                         <div className="menu-items">
                           {menuItem.map((item) => (
                             <>
                               {item.available && (
-                                <MenuItem item={item} inCart={false} storeDetails={storeDetails}/>
+                                <MenuItem
+                                  item={item}
+                                  inCart={false}
+                                  storeDetails={storeDetails}
+                                />
                               )}
                             </>
                           ))}
                         </div>
-                       
                       </Card>
                     </div>
                   )
@@ -187,9 +191,13 @@ function Menu() {
             className="cart-summary"
             style={{ backgroundColor: storeDetails?.secondaryColor }}
           >
-            <span>View and confirm order ({cart.reduce((accumulator, item) => {
-              return accumulator + item.quantity;
-            }, 0)} items)</span>
+            <span>
+              View and confirm order (
+              {cart.reduce((accumulator, item) => {
+                return accumulator + item.quantity;
+              }, 0)}{" "}
+              items)
+            </span>
             <span className="cart-summary-icon">
               <RightCircleOutlined />
             </span>
