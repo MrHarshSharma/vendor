@@ -26,8 +26,11 @@ import {
 // import { doc, getDoc, setDoc } from "firebase/firestore";
 // import { db } from "../firebase/setup";
 import { useNavigate, useParams } from "react-router-dom";
-import { DOMContentLoaded } from "../constants/commonFunctions";
-import MenuItem from "../components/MenuItem";
+import { DOMContentLoaded, renderIngridents } from "../constants/commonFunctions";
+import { BiDish } from "react-icons/bi";
+import { MdOutlineTimer } from "react-icons/md";
+import { GiCampCookingPot } from "react-icons/gi";
+
 const ReviewMenu = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
   const [loading, setLoading] = useState(false);
@@ -162,15 +165,25 @@ const ReviewMenu = () => {
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         {cart.map((item, i) => (
-          <div style={{display: "flex", flexDirection: "row", gap: "10px",justifyContent:'space-between'}}>
-            <div style={{ display: "flex", gap: "20px" }}>
+          <div style={{padding:'10px 5px', display: "flex", flexDirection: "row", gap: "10px",justifyContent:'space-between',  borderBottom:`1px solid ${storeDetails?.secondaryColor}`}}>
+            <div style={{ display: "flex", gap: "20px", width:'74%' }}>
+            {item?.imageUrl&&(
+
               <img
-                src={item.imageUrl}
-                style={{ width: "60px", borderRadius: "5px" }}
+              src={item.imageUrl}
+              style={{ width: "60px", borderRadius: "5px" }}
               />
-              <span style={{ display: "flex", flexDirection: "column" }}>
+            )}
+              <span style={{ display: "flex", flexDirection: "column", gap:'5px' }}>
                 <span>{item.name}</span>
-                <span>{item.description}</span>
+                <span className="menu-item-description smallFont">{item.description}</span>
+                <div style={{display:'flex', gap:'10px'}}>
+                <span className="smallFont" style={{  display:'flex', alignItems:'center', gap:'2px' }} > <BiDish /> {item.servings}</span>
+          <span className="smallFont"  style={{ display:'flex', alignItems:'center',gap:'2px'  }}><MdOutlineTimer />{item.prep_time} mins</span>
+          </div>
+          <span className="smallFont" style={{ display:'flex', alignItems:'center', gap:'2px' }}>
+          <GiCampCookingPot />{renderIngridents(item.ingridents)}
+          </span>
                 <span style={{display:'flex', alignItems:'center'}}><LiaRupeeSignSolid/>{item.quantity * item.price}</span>
               </span>
             </div>
@@ -185,22 +198,22 @@ const ReviewMenu = () => {
               <div style={{ display: "flex", gap: "10px", flexDirection:'column', justifyContent:'end' }}>
               <div style={{display: "flex", gap: "5px", flexDirection:'row'}}>
               {item.quantity > 1 && (
-                <span onClick={() => dispatch(decrementQuantity(item.name))}>
-                <MinusCircleOutlined />
+                <span  onClick={() => dispatch(decrementQuantity(item.name))}>
+                <MinusCircleOutlined className='smallFont' />
                 </span>
                 )}
-                <span>
+                <span className='smallFont'>
                 Qty: {item.quantity}
                 </span>
                 <span onClick={() => dispatch(incrementQuantity(item.name))}>
-                <PlusCircleOutlined />
+                <PlusCircleOutlined className='smallFont' />
                 </span>
                 </div>
 
-                <div>
+                <div >
                 
-                <span style={{display:'flex', alignItems:'center', gap:'5px'}} onClick={() => dispatch(removeFromCart(item.name))}>
-                <DeleteOutlined />
+                <span className='smallFont' style={{display:'flex', alignItems:'center', gap:'5px'}} onClick={() => dispatch(removeFromCart(item.name))}>
+                <DeleteOutlined className='smallFont' />
                 Remove
                 </span>
                 </div>
@@ -211,7 +224,7 @@ const ReviewMenu = () => {
         <span
           style={{
             marginLeft: "auto",
-            borderTop: `1px solid ${storeDetails?.secondaryColor}`,
+            // borderTop: `1px solid ${storeDetails?.secondaryColor}`,
             display:'flex',
             alignItems: 'center',
           }}

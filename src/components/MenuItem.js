@@ -3,7 +3,7 @@ import { addToCart } from "../actions/cartActions";
 import { useDispatch } from "react-redux";
 import {message} from 'antd'
 import { LiaRupeeSignSolid } from "react-icons/lia";
-import { hexToRgba } from "../constants/commonFunctions";
+import { hexToRgba, renderIngridents } from "../constants/commonFunctions";
 import { BiDish } from "react-icons/bi";
 import { MdOutlineTimer } from "react-icons/md";
 import { GiCampCookingPot } from "react-icons/gi";
@@ -14,20 +14,7 @@ const dispatch = useDispatch();
         dispatch(addToCart(item));
       };
 
-      const renderIngridents = (ingridents) => {
-        let allIngridents = ingridents.split(',');
-        return (
-          <div style={{ display: 'flex', overflowX: 'auto', whiteSpace: 'nowrap' }}>
-          
-            {allIngridents.map((element, index) => (
-              
-              <span className="smallFont" key={index} style={{ }}>
-                {element},
-              </span>
-            ))}
-          </div>
-        );
-      };
+     
 
   return (
     <div className="item-menu" style={{flex:1}}>

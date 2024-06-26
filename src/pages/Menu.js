@@ -123,13 +123,13 @@ function Menu() {
                 we offer{" "}
                 {Object.keys(storeDetails.menu).map((category, i) => (
                   <span key={category} className="category-item">
-                    <span
+                    <u
                       onClick={() => scrollToSection(category)}
                       className="category-link"
                       style={{ textTransform: "capitalize" }}
                     >
                       {category}
-                    </span>
+                    </u>
                     {Object.keys(storeDetails.menu).length - 2 > i && ", "}
                     {Object.keys(storeDetails.menu).length - 2 == i && " and "}
                   </span>

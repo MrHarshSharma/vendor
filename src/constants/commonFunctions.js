@@ -75,3 +75,19 @@ function hexToRgb(hex) {
 
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   };
+
+  
+  export const renderIngridents = (ingridents) => {
+    let allIngridents = ingridents.split(',');
+    return (
+      <div style={{ display: 'flex', overflowX: 'auto', whiteSpace: 'nowrap' }}>
+      
+        {allIngridents.map((element, index) => (
+          
+          <span className="smallFont" key={index} style={{ }}>
+            {element},
+          </span>
+        ))}
+      </div>
+    );
+  };
