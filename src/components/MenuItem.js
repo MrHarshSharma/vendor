@@ -13,6 +13,7 @@ import {
   DeleteOutlined,
   LeftCircleOutlined,
 } from "@ant-design/icons";
+import { BiFoodTag } from "react-icons/bi";
 import CartActionButtons from "./CartActionButtons";
 
 const MenuItem = ({ item, inCart, storeDetails }) => {
@@ -60,7 +61,9 @@ const dispatch = useDispatch();
             gap:'5px'
           }}
         >
-          <span style={{ color: storeDetails?.primaryColor }}>{item.name}</span>
+        
+          <span style={{ color: storeDetails?.primaryColor, display:'flex', gap:'5px', alignItems:'center' }}><BiFoodTag style={{color:item.veg_nonveg=='veg'?'green':'red'}} />{item.name}</span>
+       
           <span
           style={{ color: storeDetails?.primaryColor }}
           className="menu-item-description smallFont"
