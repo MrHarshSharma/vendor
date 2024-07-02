@@ -4,12 +4,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import { db } from '../firebase/setup';
 import { doc, getDoc } from 'firebase/firestore';
 import { useState } from 'react';
-
+import {message} from 'antd'
+import { collection, addDoc , query, where, getDocs} from 'firebase/firestore';
 
 const Feedback = () => {
-    const { storeId, orderId } = useParams();
+    const { storeId, orderId, customerId } = useParams();
     const [selectedOrder, setSelectedOrder] = useState(null)
     const [feedback, setFeedback] = useState([]);
+    const [alreadyFeedbackSubmitted ,setAlreadyFeedbackSubmitted] = useState(null);
+    const [sudoState, setSudoState] = useState(0)
     useEffect(() => {
         const fetchOrder = async () => {
             try {
@@ -53,10 +56,43 @@ const Feedback = () => {
       };
     
       // Handle form submission
-      const handleSubmit = (e) => {
+      useEffect(() => {
+
+        const checkFeedback = async() =>{
+
+            const feedbacksRef = collection(db, 'feedbacks');
+            const q = query(feedbacksRef, where('storeId', '==', storeId), where('orderId', '==', orderId), where('customerId', '==', customerId));
+            const querySnapshot = await getDocs(q);
+            
+            if (!querySnapshot.empty) {
+                //   alert('Feedback already exists for this order.');
+                setAlreadyFeedbackSubmitted(true)
+            }
+        }
+
+        checkFeedback()
+      },[sudoState])
+
+      const handleSubmit = async (e) => {
         e.preventDefault();
-        // Submit feedback logic here (e.g., send to backend or EmailJS)
-        console.log('Feedback submitted:', feedback);
+
+      
+          // Add new feedback document
+          try {
+            const feedbacksRef = collection(db, 'feedbacks');
+            await addDoc(feedbacksRef, {
+              storeId,
+              orderId,
+              customerId,
+              feedback,
+              timeStamp: new Date()
+            });
+            message.success('Thank you for you valuable feedback, please visit soon')
+            setSudoState(prev=>prev+1)
+          } catch (error) {
+            console.error('Error adding document: ', error);
+            message.faiiled("Can't process your feedback at the moment. Please try again")
+          }
         // Reset form or show confirmation to user
       };
 
@@ -65,14 +101,18 @@ const Feedback = () => {
     
     <div style={{padding:'10px'}}>
       <span>Feedback Form</span>
-      <form onSubmit={handleSubmit} style={{display:'flex', flexDirection:'column', gap:'20px', marginTop:'20px'}}>
+      {alreadyFeedbackSubmitted && (<div style={{display:'flex', flexDirection:'column', gap:'5px', boxShadow:'0px 0px 20px -15px #000', borderRadius:'5px', padding:'10px', marginTop:'20px'}}>
+        <span>You have submit the feedback. Order to get a chance to share feedback again.</span>
+        </div>)}
+      {!alreadyFeedbackSubmitted && (
+        <form onSubmit={handleSubmit} style={{display:'flex', flexDirection:'column', gap:'20px', marginTop:'20px'}}>
         {selectedOrder?.order?.map((item, index) => (
           <div key={index} style={{display:'flex', flexDirection:'column', gap:'5px', boxShadow:'0px 0px 20px -15px #000', borderRadius:'5px', padding:'10px'}}>
             <span>{item.name}</span>
             <span className='smallFont menu-item-description'>{item.description}</span>
          
-            <span>
-              Rating
+            <span style={{marginTop:'20px'}}>
+              Rating{" "}
               <select
                 value={feedback?.[index]?.rating}
                 // onChange={(e) => handleRatingChange(item.name, e.target.value)}
@@ -87,10 +127,11 @@ const Feedback = () => {
               </select>
             </span>
             <span>
-            Any comments:
+            Any comments {" "} <br />
             <textarea
             value={feedback?.[index]?.comment}
             onChange={(e) => handleCommentChange(index, e.target.value)}
+            style={{width:'100%'}}
           />
           </span>
             <br />
@@ -98,6 +139,8 @@ const Feedback = () => {
         ))}
         <button type="submit">Submit Feedback</button>
       </form>
+      )}
+     
     </div>
   )
 }
