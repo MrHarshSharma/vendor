@@ -92,6 +92,7 @@ const ReviewMenu = () => {
         customer: user,
         timeStamp: Date.now(),
         order: cart,
+        orderStatus:'new'
       });
       //   }
 
