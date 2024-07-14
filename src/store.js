@@ -1,11 +1,12 @@
 // src/store.js
 import { createStore, combineReducers } from 'redux';
 import { cartReducer } from './reducers/cartReducers';
-import { storeReducer } from './reducers/storeReducers';
+import { loadingReducer, storeReducer } from './reducers/storeReducers';
 
 const rootReducer = combineReducers({
      cartReducer,
-     storeReducer
+     storeReducer,
+     loadingReducer
   });
 
 const store = createStore(rootReducer,window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());

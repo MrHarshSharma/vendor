@@ -77,16 +77,6 @@ const ReviewMenu = () => {
     setLoading(true);
     try {
       const docRef = doc(db, "orders", `order_${Date.now()}`);
-      //   const docSnap = await getDoc(docRef);
-      //     let menu = 'menu'
-      //     console.log(docSnap.data());
-      //   if (docSnap.exists()) {
-      //     // Update the document if it exists
-      //     await updateDoc(docRef, {
-      //       [menu]: categories,
-      //     });
-      //   } else {
-      // Create the document with the specified field if it doesn't exist
       await setDoc(docRef, {
         storeId: storeId,
         customer: user,
@@ -131,7 +121,7 @@ const ReviewMenu = () => {
       localStorage.setItem("user", JSON.stringify(userData));
 
       placeOrder();
-      console.log("User signed in:", user);
+    
       return user;
     } catch (error) {
       console.error("Error signing in with Google:", error);

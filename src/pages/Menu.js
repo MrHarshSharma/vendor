@@ -11,7 +11,7 @@ import { DOMContentLoaded, hexToRgba } from "../constants/commonFunctions";
 // import "./Menu.css";  // Assuming you create a Menu.css file for custom styles
 
 import MenuItem from "../components/MenuItem";
-import { addStore } from "../actions/storeActions";
+import { addStore, setPageLoading } from "../actions/storeActions";
 
 function Menu() {
   const { storeId } = useParams();
@@ -44,6 +44,8 @@ function Menu() {
       }
     } catch (error) {
       console.error("Error fetching document:", error);
+    } finally {
+      dispatch(setPageLoading({payload: false}));
     }
   };
 
@@ -180,7 +182,7 @@ function Menu() {
               })}
           </div>
         ) : (
-          <span>Store not configured yet</span>
+          <span>Loading...</span>
         )}
 
         {cart?.length > 0 && (

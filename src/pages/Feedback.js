@@ -6,6 +6,9 @@ import { doc, getDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import {message} from 'antd'
 import { collection, addDoc , query, where, getDocs} from 'firebase/firestore';
+import {useDispatch} from 'react-redux';
+import { setPageLoading } from '../actions/storeActions';
+import AppLayout from './AppLayout';
 
 const Feedback = () => {
     const { storeId, orderId, customerId } = useParams();
@@ -13,6 +16,11 @@ const Feedback = () => {
     const [feedback, setFeedback] = useState([]);
     const [alreadyFeedbackSubmitted ,setAlreadyFeedbackSubmitted] = useState(null);
     const [sudoState, setSudoState] = useState(0)
+const dispatch = useDispatch();
+useEffect(()=>{
+  dispatch(setPageLoading({payload:true}))
+
+},[])
     useEffect(() => {
         const fetchOrder = async () => {
             try {
@@ -32,6 +40,8 @@ const Feedback = () => {
                 }
               } catch (error) {
                 console.error("Error fetching document:", error);
+              }finally {
+                dispatch(setPageLoading({payload:false}))
               }
             };
         
@@ -98,7 +108,9 @@ const Feedback = () => {
 
       
   return (
-    
+    <AppLayout>
+
+  
     <div style={{padding:'10px'}}>
       <span>Feedback Form</span>
       {alreadyFeedbackSubmitted && (<div style={{display:'flex', flexDirection:'column', gap:'5px', boxShadow:'0px 0px 20px -15px #000', borderRadius:'5px', padding:'10px', marginTop:'20px'}}>
@@ -142,6 +154,7 @@ const Feedback = () => {
       )}
      
     </div>
+    </AppLayout>
   )
 }
 
