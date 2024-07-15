@@ -24,7 +24,7 @@ const CartActionButtons = ({item}) => {
       </span>
       )}
       <span className='smallFont'>
-     {item.quantity}
+        {item.quantity}
       </span>
       <span onClick={() => dispatch(incrementQuantity(item.name))}>
       <PlusCircleOutlined className='smallFont' />

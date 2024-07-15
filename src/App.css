@@ -7,6 +7,11 @@
   .container {
     padding: 10px;
   }
+
+  .app-container{
+    height: auto !important;
+    padding: 10px 20px;
+  }
 }
 
 .productListContainer {
