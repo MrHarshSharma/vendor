@@ -26,6 +26,7 @@ import { BiDish } from "react-icons/bi";
 import { MdOutlineTimer } from "react-icons/md";
 import { GiCampCookingPot } from "react-icons/gi";
 import CartActionButtons from "../components/CartActionButtons";
+import { setPageLoading } from "../actions/storeActions";
 
 const ReviewMenu = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
@@ -37,6 +38,7 @@ const ReviewMenu = () => {
 
   useEffect(() => {
     if (cart.length == 0) {
+      dispatch(setPageLoading({payload:true}))
       navigate(-1);
     }
   }, [cart]);
