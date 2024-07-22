@@ -27,6 +27,7 @@ import { MdOutlineTimer } from "react-icons/md";
 import { GiCampCookingPot } from "react-icons/gi";
 import CartActionButtons from "../components/CartActionButtons";
 import { setPageLoading } from "../actions/storeActions";
+import AppLayout from "./AppLayout";
 
 const ReviewMenu = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
@@ -138,7 +139,8 @@ const ReviewMenu = () => {
   };
 
   return (
-    <div
+    <AppLayout>
+       <div
       id="myElement"
       style={{
         padding: "10px",
@@ -238,6 +240,8 @@ style={{ width: "60px", borderRadius: "5px", height: "fit-content" }}
         </div>
       </div>
     </div>
+    </AppLayout>
+   
   );
 };
 
