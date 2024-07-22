@@ -143,7 +143,8 @@ const ReviewMenu = () => {
       style={{
         padding: "10px",
         backgroundColor: storeDetails?.primaryColor,
-        height: "100vh",
+        height: "90vh",
+        overflow:'auto'
       }}
     >
       <div style={{ marginBottom: "20px" }}>
@@ -158,11 +159,11 @@ const ReviewMenu = () => {
             <div style={{ display: "flex", gap: "20px", width:'74%' }}>
             {item?.imageUrl&&(
 
-              <img
-              src={item.imageUrl}
-              style={{ width: "60px", borderRadius: "5px" }}
-              />
-            )}
+<img
+src={item.imageUrl}
+style={{ width: "60px", borderRadius: "5px", height: "fit-content" }}
+/>
+)}
               <span style={{ display: "flex", flexDirection: "column", gap:'5px' }}>
                 <span>{item.name}</span>
                 <span className="menu-item-description smallFont">{item.description}</span>
@@ -176,6 +177,7 @@ const ReviewMenu = () => {
                 <span style={{display:'flex', alignItems:'center'}}><LiaRupeeSignSolid/>{item.quantity * item.price}</span>
               </span>
             </div>
+            
             <div
               style={{
                 display: "flex",

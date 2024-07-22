@@ -12,6 +12,7 @@ import { DOMContentLoaded, hexToRgba } from "../constants/commonFunctions";
 
 import MenuItem from "../components/MenuItem";
 import { addStore, setPageLoading } from "../actions/storeActions";
+import Withlove from "../components/Withlove";
 
 function Menu() {
   const { storeId } = useParams();
@@ -206,6 +207,7 @@ function Menu() {
           </div>
         )}
       </div>
+     
     </AppLayout>
   );
 }
