@@ -16,6 +16,7 @@ import Withlove from "../components/Withlove";
 
 function Menu() {
   const { storeId } = useParams();
+  const { table } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const empyMenu = {
@@ -189,7 +190,7 @@ function Menu() {
         {cart?.length > 0 && (
           <div
             onClick={() => {
-              navigate(`/review/${storeId}`);
+              navigate(`/review/${storeId}/${table}`);
             }}
             className="cart-summary"
             style={{ backgroundColor: storeDetails?.secondaryColor, border: `1px solid ${storeDetails?.primaryColor}`}}

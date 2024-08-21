@@ -23,9 +23,9 @@ import Feedback from "./pages/Feedback";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
-      <Route path="/menu/:storeId" element={<Menu />} />
+      <Route path="/menu/:storeId/:table" element={<Menu />} />
      
-      <Route path="/review/:storeId" element={<ReviewMenu />} />
+      <Route path="/review/:storeId/:table" element={<ReviewMenu />} />
       <Route path="/feedback/:storeId/:orderId/:customerId" element={<Feedback />} />
       {/*
       <Route path="/" element={<Protected />}>

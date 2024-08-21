@@ -10,9 +10,7 @@ function AppLayout({ children }) {
   return (
     <div>
       {/*<ToolHeader />*/}
-      <div
-        
-      >
+      <div>
         {children}
         {isLoaded && (
           <div className="loadingScreen">

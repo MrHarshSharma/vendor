@@ -45,6 +45,7 @@ const ReviewMenu = () => {
   }, [cart]);
 
   const { storeId } = useParams();
+  const { table } = useParams();
   const [storeDetails, setStoreDetails] = useState(null);
   const fetchConfigstore = async () => {
     try {
@@ -82,6 +83,7 @@ const ReviewMenu = () => {
       const docRef = doc(db, "orders", `order_${Date.now()}`);
       await setDoc(docRef, {
         storeId: storeId,
+        table:Number(table),
         customer: user,
         timeStamp: Date.now(),
         order: cart,
