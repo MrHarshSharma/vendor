@@ -17,6 +17,7 @@ const Feedback = () => {
   const [feedback, setFeedback] = useState([]);
   const [alreadyFeedbackSubmitted, setAlreadyFeedbackSubmitted] =
     useState(null);
+    const [loading, setLoading] = useState(false)
   const [sudoState, setSudoState] = useState(0);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -88,7 +89,8 @@ const Feedback = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true)
+    // console.log("reached her");
     // Add new feedback document
     try {
       const feedbacksRef = collection(db, "feedbacks");
@@ -106,8 +108,9 @@ const Feedback = () => {
       message.faiiled(
         "Can't process your feedback at the moment. Please try again"
       );
+    } finally{
+      setLoading(false)
     }
-    // Reset form or show confirmation to user
   };
 
   return (
@@ -115,7 +118,7 @@ const Feedback = () => {
       <div className="app-container">
         <Form>
           <span>Feedback Form</span>
-          {alreadyFeedbackSubmitted && (
+          {!alreadyFeedbackSubmitted && (
             <div
               style={{
                 display: "flex",
@@ -133,9 +136,9 @@ const Feedback = () => {
               </span>
             </div>
           )}
-          {!alreadyFeedbackSubmitted && (
+          {alreadyFeedbackSubmitted && (
             <form
-              onSubmit={handleSubmit}
+             
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -219,7 +222,7 @@ const Feedback = () => {
                 </div>
               ))}
 
-              <Button type="primary" htmlType="submit" loading={false}>
+              <Button type="primary"  onClick={handleSubmit} loading={loading}>
                 Submit feedback
               </Button>
             </form>
