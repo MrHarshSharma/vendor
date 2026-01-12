@@ -39,48 +39,26 @@ const MenuItem = ({ item, inCart, storeDetails, onOpenDrawer }) => {
             <span style={{ fontSize: '30px' }}>🥘</span>
           </div>
         )}
-      </div>
 
-      <div className="card-content">
-        <div className="card-title">{item.name}</div>
-        <div className="card-desc">{item.description}</div>
-
-        {/* Metadata: Servings & Time */}
-        <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', fontSize: '11px', color: '#9CA3AF' }}>
-          {item.servings && (
-            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <BiDish style={{ color: '#FDD874' }} /> {item.servings}
-            </span>
-          )}
-          {item.prep_time && (
-            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <MdOutlineTimer style={{ color: '#FDD874' }} /> {item.prep_time} mins
-            </span>
-          )}
-        </div>
-
-        <div className="card-footer">
-          <div className="card-price">
-            <span style={{ fontSize: '14px', marginRight: '2px' }}>$</span>{item.price}
-          </div>
-
+        {/* Floating Quantity Selector */}
+        <div style={{ position: 'absolute', bottom: '-15px', right: '50%', transform: 'translateX(50%)', zIndex: 10, boxShadow: '0 4px 10px rgba(0,0,0,0.3)' }}>
           {quantity === 0 ? (
             <div
-              onClick={() => dispatch(addToCart(item))}
+              onClick={(e) => {
+                e.stopPropagation();
+                dispatch(addToCart(item));
+              }}
               className="add-btn"
+              style={{ width: '36px', height: '36px', background: 'white', color: '#1F2332' }}
             >
-              <PlusCircleOutlined style={{ color: '#1F2332' }} />
+              <PlusOutlined style={{ fontSize: '18px', fontWeight: 'bold' }} />
             </div>
           ) : (
-            <div className="qty-box-large" style={{ width: '90px', height: '32px', borderRadius: '20px', padding: '0 8px', background: '#FDD874' }}>
+            <div className="qty-box-large" style={{ width: '85px', height: '30px', borderRadius: '8px', padding: '0 4px', background: '#FDD874', justifyContent: 'space-between' }}>
               <div
-                style={{ color: '#1F2332', fontSize: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                style={{ color: '#1F2332', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '0 4px' }}
                 onClick={(e) => {
                   e.stopPropagation();
-                  // If qty is 1, decrement should remove it? 
-                  // The standard action decrementQuantity usually subtracts, but if it hits 0?
-                  // The reducer for DECREMENT checks IF > 1. 
-                  // So if it is 1, we must call removeFromCart.
                   if (quantity === 1) {
                     dispatch(removeFromCart(item.name));
                   } else {
@@ -91,10 +69,10 @@ const MenuItem = ({ item, inCart, storeDetails, onOpenDrawer }) => {
                 <MinusOutlined />
               </div>
 
-              <span style={{ color: '#1F2332', fontWeight: '700', fontSize: '16px' }}>{quantity}</span>
+              <span style={{ color: '#1F2332', fontWeight: '700', fontSize: '14px' }}>{quantity}</span>
 
               <div
-                style={{ color: '#1F2332', fontSize: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                style={{ color: '#1F2332', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '0 4px' }}
                 onClick={(e) => {
                   e.stopPropagation();
                   dispatch(incrementQuantity(item.name));
@@ -104,6 +82,33 @@ const MenuItem = ({ item, inCart, storeDetails, onOpenDrawer }) => {
               </div>
             </div>
           )}
+        </div>
+      </div>
+
+      <div className="card-content">
+        <div>
+          <div className="card-title">{item.name}</div>
+          <div className="card-desc">{item.description}</div>
+
+          {/* Metadata: Servings & Time */}
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '8px', fontSize: '11px', color: '#9CA3AF' }}>
+            {item.servings && (
+              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <BiDish style={{ color: '#FDD874' }} /> {item.servings}
+              </span>
+            )}
+            {item.prep_time && (
+              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <MdOutlineTimer style={{ color: '#FDD874' }} /> {item.prep_time} mins
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="card-footer" style={{ marginTop: '0' }}>
+          <div className="card-price">
+            <span style={{ fontSize: '14px', marginRight: '2px' }}>$</span>{item.price}
+          </div>
         </div>
       </div>
     </div>

@@ -121,13 +121,12 @@ function Menu() {
 
           {/* Right Side: Actions (Phone + Cart) */}
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <button className="icon-btn">
-              <PhoneOutlined />
-            </button>
-            <button className="icon-btn" onClick={() => setCartDrawerVisible(true)}>
-              <ShoppingOutlined style={{ fontSize: '22px' }} />
-              {cartTotalCount > 0 && <span className="cart-badge">{cartTotalCount}</span>}
-            </button>
+            {cartTotalCount > 0 && (
+              <button className="icon-btn" onClick={() => setCartDrawerVisible(true)}>
+                <ShoppingOutlined style={{ fontSize: '22px' }} />
+                <span className="cart-badge">{cartTotalCount}</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -192,7 +191,10 @@ function Menu() {
               <span className="cart-title">Your Requests</span>
               <span style={{ color: '#9CA3AF', fontSize: '14px' }}>{cartTotalCount} items</span>
             </div>
-            <button className="clear-btn" onClick={() => dispatch(clearCart())}>Clear All</button>
+            <button className="clear-btn" onClick={() => {
+              dispatch(clearCart());
+              setCartDrawerVisible(false);
+            }}>Clear All</button>
           </div>
 
           <div style={{ flex: 1, overflowY: 'auto' }}>
