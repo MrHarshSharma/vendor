@@ -1,0 +1,48 @@
+:root {
+  /* Design System: "Vibrant Glass" */
+
+  /* Typography */
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Colors - Modern Vivid Palette */
+  --primary-color: #6366f1; /* Indigo */
+  --secondary-color: #a855f7; /* Purple */
+  --accent-color: #ec4899; /* Pink */
+  
+  --background-start: #fdfbf7;
+  --background-end: #e2e8f0;
+  
+  --text-main: #1e293b;
+  --text-secondary: #475569;
+  --text-light: #94a3b8;
+  
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  --glass-blur: 12px;
+
+  /* Spacing & Layout */
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 8px;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode {
+    --primary-color: #818cf8;
+    --background-start: #0f172a;
+    --background-end: #1e293b;
+    --text-main: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { addToCart, decrementQuantity, incrementQuantity, removeFromCart } from "../actions/cartActions";
 import { useDispatch, useSelector } from "react-redux";
-import {message} from 'antd'
+import { message } from 'antd'
 import { LiaRupeeSignSolid } from "react-icons/lia";
 import { hexToRgba, renderIngridents } from "../constants/commonFunctions";
 import { BiDish } from "react-icons/bi";
@@ -12,116 +12,100 @@ import {
   MinusCircleOutlined,
   DeleteOutlined,
   LeftCircleOutlined,
+  MinusOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
 import { BiFoodTag } from "react-icons/bi";
 import CartActionButtons from "./CartActionButtons";
 
-const MenuItem = ({ item, inCart, storeDetails }) => {
-const dispatch = useDispatch();
-    const handleAddToCart = (item) => {
-        dispatch(addToCart(item));
-      };
-      const cart = useSelector(state => state.cartReducer.cart);
-      useEffect(() =>{
-        console.log(cart)
-      },[])
-     const renderTheButtonAction = (itemName) =>{
-   
-      let isPresent = cart.filter(cartItem=>cartItem.name === itemName)[0];
-      if(isPresent){
-        return (
-              <CartActionButtons item={isPresent} />
-        )
-      }else{
-        return (   <span
-          onClick={() => {
-            handleAddToCart(item);
-            // message.success(`${item.name} added to cart`);
-          }}
-          style={{
-            backgroundColor: hexToRgba(storeDetails?.secondaryColor),
-            padding: "2px 5px",
-            borderRadius: "5px",
-          }}
-        >
-        Add
-        </span>)
-      }
-     }
+const MenuItem = ({ item, inCart, storeDetails, onOpenDrawer }) => {
+  const dispatch = useDispatch();
+
+  const handleAddToCart = (item) => {
+    dispatch(addToCart(item));
+  };
+
+  const cart = useSelector(state => state.cartReducer.cart);
+  const cartItem = cart.find(cartItem => cartItem.name === item.name);
+  const quantity = cartItem ? cartItem.quantity : 0;
 
   return (
-    <div className="item-menu" style={{flex:1}}>
-      
-      <div key={item.name} className="menu-item">
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            height: "-webkit-fill-available",
-            gap:'5px'
-          }}
-        >
-        
-          <span style={{ color: storeDetails?.primaryColor, display:'flex', gap:'5px', alignItems:'center' }}><BiFoodTag style={{color:item.veg_nonveg=='veg'?'green':'red'}} />{item.name}</span>
-       
-          <span
-          style={{ color: storeDetails?.primaryColor }}
-          className="menu-item-description smallFont"
-          >
-          {item.description}
-          </span>
-          <div style={{display:'flex', gap:'10px'}}>
-          <span className="smallFont" style={{ color: storeDetails?.primaryColor, display:'flex', alignItems:'center', gap:'2px' }} > <BiDish /> {item.servings}</span>
-          <span className="smallFont"  style={{ color: storeDetails?.primaryColor,  display:'flex', alignItems:'center',gap:'2px'  }}><MdOutlineTimer />{item.prep_time} mins</span>
+    <div className="item-menu">
+      <div className="card-image-container">
+        {item.imageUrl ? (
+          <img src={item.imageUrl} alt={item.name} className="card-image" />
+        ) : (
+          <div style={{ width: '100%', height: '100%', background: '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ fontSize: '30px' }}>🥘</span>
           </div>
-          <span className="smallFont" style={{ color: storeDetails?.primaryColor,  display:'flex', alignItems:'center', gap:'2px' }}>
-          <GiCampCookingPot />{renderIngridents(item.ingridents)}
-          </span>
-         
-          <div
-            style={{
-              marginTop: "auto",
-              gap: "5px",
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              
-            }}
-          >
-            <span
-              style={{
-                color: storeDetails?.primaryColor,
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <LiaRupeeSignSolid />
-              {item.price}
-            </span>
-            
-           
-          </div>
-        </div>
-      </div>
-
-      <div style={{display:'flex', flexDirection:'column', gap:'10px', alignItems:'center', justifyContent:'center'}}>
-{item?.imageUrl && (
-  <img
-          src={item.imageUrl}
-          style={{
-            width: "70px",
-            borderRadius: "5px",
-          }}
-        />
-)}
-      
-        {!inCart && ( 
-          <>
-          {renderTheButtonAction(item.name)}
-          </>   
         )}
       </div>
 
+      <div className="card-content">
+        <div className="card-title">{item.name}</div>
+        <div className="card-desc">{item.description}</div>
+
+        {/* Metadata: Servings & Time */}
+        <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', fontSize: '11px', color: '#9CA3AF' }}>
+          {item.servings && (
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <BiDish style={{ color: '#FDD874' }} /> {item.servings}
+            </span>
+          )}
+          {item.prep_time && (
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <MdOutlineTimer style={{ color: '#FDD874' }} /> {item.prep_time} mins
+            </span>
+          )}
+        </div>
+
+        <div className="card-footer">
+          <div className="card-price">
+            <span style={{ fontSize: '14px', marginRight: '2px' }}>$</span>{item.price}
+          </div>
+
+          {quantity === 0 ? (
+            <div
+              onClick={() => dispatch(addToCart(item))}
+              className="add-btn"
+            >
+              <PlusCircleOutlined style={{ color: '#1F2332' }} />
+            </div>
+          ) : (
+            <div className="qty-box-large" style={{ width: '90px', height: '32px', borderRadius: '20px', padding: '0 8px', background: '#FDD874' }}>
+              <div
+                style={{ color: '#1F2332', fontSize: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // If qty is 1, decrement should remove it? 
+                  // The standard action decrementQuantity usually subtracts, but if it hits 0?
+                  // The reducer for DECREMENT checks IF > 1. 
+                  // So if it is 1, we must call removeFromCart.
+                  if (quantity === 1) {
+                    dispatch(removeFromCart(item.name));
+                  } else {
+                    dispatch(decrementQuantity(item.name));
+                  }
+                }}
+              >
+                <MinusOutlined />
+              </div>
+
+              <span style={{ color: '#1F2332', fontWeight: '700', fontSize: '16px' }}>{quantity}</span>
+
+              <div
+                style={{ color: '#1F2332', fontSize: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  dispatch(incrementQuantity(item.name));
+                }}
+              >
+                <PlusOutlined />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
