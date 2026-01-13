@@ -159,8 +159,22 @@ function Menu() {
             {storeDetails.menu &&
               Object.keys(storeDetails.menu).map((category) => {
                 const menuItem = storeDetails.menu[category];
+                // Filter items first
+                const filteredItems = menuItem.filter(item => {
+                  // Check for Veg status
+                  const isVeg = (typeof item.veg_nonveg === 'string' ? item.veg_nonveg.toLowerCase() === 'veg' : item.veg_nonveg === true)
+                    || item.isVeg
+                    || item.veg
+                    || item.vegetarian
+                    || (item.type === 'veg');
+
+                  if (isVeg) return showVeg;
+                  return showNonVeg;
+                });
+
+                // Only render if there are items to show
                 return (
-                  menuItem.length > 0 && (
+                  filteredItems.length > 0 && (
                     <div className="menu-category" key={category} id={category}>
                       {/* Category Title */}
                       <h3 style={{
@@ -175,26 +189,14 @@ function Menu() {
                       </h3>
 
                       <div className="menu-items">
-                        {menuItem
-                          .filter(item => {
-                            // Check for Veg status (using same logic as MenuItem)
-                            const isVeg = (typeof item.veg_nonveg === 'string' ? item.veg_nonveg.toLowerCase() === 'veg' : item.veg_nonveg === true)
-                              || item.isVeg
-                              || item.veg
-                              || item.vegetarian
-                              || (item.type === 'veg');
-
-                            if (isVeg) return showVeg;
-                            return showNonVeg;
-                          })
-                          .map((item) => (
-                            <MenuItem
-                              key={item.name}
-                              item={item}
-                              inCart={false}
-                              storeDetails={storeDetails}
-                            />
-                          ))}
+                        {filteredItems.map((item) => (
+                          <MenuItem
+                            key={item.name}
+                            item={item}
+                            inCart={false}
+                            storeDetails={storeDetails}
+                          />
+                        ))}
                       </div>
                     </div>
                   )
