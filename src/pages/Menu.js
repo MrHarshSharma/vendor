@@ -4,7 +4,7 @@ import {
   PlusCircleOutlined, RightCircleOutlined, DownOutlined, CloseOutlined,
   MinusOutlined, PlusOutlined, PhoneOutlined, ShoppingOutlined, DeleteOutlined
 } from "@ant-design/icons";
-import { Card, message, Dropdown, Space, Drawer } from "antd";
+import { Card, message, Dropdown, Space, Drawer, Switch } from "antd";
 import { db } from "../firebase/setup";
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
@@ -30,6 +30,8 @@ function Menu() {
   };
 
   const [activeCategory, setActiveCategory] = useState("Categories");
+  const [showVeg, setShowVeg] = useState(true);
+  const [showNonVeg, setShowNonVeg] = useState(true);
 
   // Drawer State & Cart State
   const [cartDrawerVisible, setCartDrawerVisible] = useState(false);
@@ -106,9 +108,29 @@ function Menu() {
       <div className="profile-container">
         {/* Header */}
         <div className="menu-header">
+
           {/* Left Side: Title */}
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span className="menu-title-text">Menu</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Switch
+                  checked={showVeg}
+                  onChange={setShowVeg}
+                  size="small"
+                  style={{ backgroundColor: showVeg ? '#22c55e' : undefined }}
+                />
+                <span style={{ color: 'white', fontSize: '14px' }}>Veg Only</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Switch
+                  checked={showNonVeg}
+                  onChange={setShowNonVeg}
+                  size="small"
+                  style={{ backgroundColor: showNonVeg ? '#ef4444' : undefined }}
+                />
+                <span style={{ color: 'white', fontSize: '14px' }}>Non-Veg</span>
+              </div>
+            </div>
             {storeDetails && (
               <Dropdown menu={{ items: categoryItems }} trigger={['click']} overlayStyle={{ minWidth: '150px' }}>
                 <div style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', color: '#9CA3AF', fontSize: '14px' }}>
@@ -129,6 +151,7 @@ function Menu() {
             )}
           </div>
         </div>
+
 
         {storeDetails !== null ? (
           <div className="menu-container">
@@ -152,14 +175,26 @@ function Menu() {
                       </h3>
 
                       <div className="menu-items">
-                        {menuItem.map((item) => (
-                          <MenuItem
-                            key={item.name}
-                            item={item}
-                            inCart={false}
-                            storeDetails={storeDetails}
-                          />
-                        ))}
+                        {menuItem
+                          .filter(item => {
+                            // Check for Veg status (using same logic as MenuItem)
+                            const isVeg = (typeof item.veg_nonveg === 'string' ? item.veg_nonveg.toLowerCase() === 'veg' : item.veg_nonveg === true)
+                              || item.isVeg
+                              || item.veg
+                              || item.vegetarian
+                              || (item.type === 'veg');
+
+                            if (isVeg) return showVeg;
+                            return showNonVeg;
+                          })
+                          .map((item) => (
+                            <MenuItem
+                              key={item.name}
+                              item={item}
+                              inCart={false}
+                              storeDetails={storeDetails}
+                            />
+                          ))}
                       </div>
                     </div>
                   )

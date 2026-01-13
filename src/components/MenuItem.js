@@ -29,6 +29,11 @@ const MenuItem = ({ item, inCart, storeDetails, onOpenDrawer }) => {
   const cartItem = cart.find(cartItem => cartItem.name === item.name);
   const quantity = cartItem ? cartItem.quantity : 0;
 
+  // Derive Veg status from multiple potential keys
+  const isVeg = item.veg_nonveg;
+
+
+
   return (
     <div className="item-menu">
       <div className="card-image-container">
@@ -39,6 +44,12 @@ const MenuItem = ({ item, inCart, storeDetails, onOpenDrawer }) => {
             <span style={{ fontSize: '30px' }}>🥘</span>
           </div>
         )}
+
+        {/* Diet Icon Top Left */}
+        <div className={`diet-icon ${item.veg_nonveg === 'Veg' || item.veg_nonveg === 'veg' || item.veg_nonveg === true ? 'veg' : 'non-veg'}`}
+          style={{ position: 'absolute', top: '8px', left: '8px', zIndex: 10, backgroundColor: 'rgba(255,255,255,0.8)', padding: '2px', backdropFilter: 'blur(4px)' }}>
+          <div className="diet-dot"></div>
+        </div>
 
         {/* Floating Quantity Selector */}
         <div style={{ position: 'absolute', bottom: '-15px', right: '50%', transform: 'translateX(50%)', zIndex: 10, boxShadow: '0 4px 10px rgba(0,0,0,0.3)' }}>

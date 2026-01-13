@@ -626,3 +626,39 @@ body {
   font-weight: 700;
   color: white;
 }
+
+/* Diet Icons */
+.diet-icon {
+  width: 14px;
+  height: 14px;
+  border: 1px solid;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  flex-shrink: 0;
+  margin-right: 6px;
+}
+
+.diet-icon.veg {
+  border-color: #22c55e;
+}
+
+.diet-icon.non-veg {
+  border-color: #ef4444;
+}
+
+.diet-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.veg .diet-dot {
+  background-color: #22c55e;
+}
+
+.non-veg .diet-dot {
+  background-color: #ef4444;
+}
