@@ -1,7 +1,7 @@
 import { message, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { db } from "../firebase/setup";
-import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import {
   LeftOutlined,
   ClockCircleOutlined,
@@ -18,7 +18,6 @@ const OrderHistory = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { storeId } = useParams();
-  const { table } = useParams();
 
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -56,7 +55,8 @@ const OrderHistory = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storeId]);
 
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);

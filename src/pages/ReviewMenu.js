@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import GoogleButton from "react-google-button";
 import { signInWithPopup } from "firebase/auth";
 import { provider, db, auth } from "../firebase/setup";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import {
   clearCart,
   incrementQuantity,
@@ -35,28 +35,9 @@ const ReviewMenu = () => {
       dispatch(setPageLoading({ payload: true }));
       navigate(-1);
     }
-  }, [cart]);
+  }, [cart, dispatch, navigate]);
 
-  const { storeId } = useParams();
-  const { table } = useParams();
-  const [storeDetails, setStoreDetails] = useState(null);
-
-  const fetchConfigstore = async () => {
-    try {
-      const configRef = doc(db, "configstore", storeId);
-      const docSnap = await getDoc(configRef);
-
-      if (docSnap.exists()) {
-        setStoreDetails(docSnap.data());
-      }
-    } catch (error) {
-      console.error("Error fetching document:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchConfigstore();
-  }, []);
+  const { storeId, table } = useParams();
 
   const cartTotal = cart.reduce((acc, item) => acc + parseFloat(item.price) * item.quantity, 0);
   const cartTotalCount = cart.reduce((acc, item) => acc + item.quantity, 0);
