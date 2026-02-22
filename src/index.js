@@ -19,6 +19,7 @@ import { Provider } from "react-redux";
 import store from "./store";
 import ReviewMenu from "./pages/ReviewMenu";
 import Feedback from "./pages/Feedback";
+import OrderHistory from "./pages/OrderHistory";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -26,6 +27,7 @@ const router = createBrowserRouter(
       <Route path="/menu/:storeId/:table" element={<Menu />} />
      
       <Route path="/review/:storeId/:table" element={<ReviewMenu />} />
+      <Route path="/orders/:storeId/:table" element={<OrderHistory />} />
       <Route path="/feedback/:storeId/:orderId/:customerId" element={<Feedback />} />
       {/*
       <Route path="/" element={<Protected />}>

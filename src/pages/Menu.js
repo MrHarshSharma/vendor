@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import AppLayout from "./AppLayout";
 import {
   PlusCircleOutlined, RightCircleOutlined, DownOutlined, CloseOutlined,
-  MinusOutlined, PlusOutlined, PhoneOutlined, ShoppingOutlined, DeleteOutlined
+  MinusOutlined, PlusOutlined, PhoneOutlined, ShoppingOutlined, DeleteOutlined,
+  HistoryOutlined
 } from "@ant-design/icons";
 import { Card, message, Dropdown, Space, Drawer, Switch } from "antd";
 import { db } from "../firebase/setup";
@@ -141,8 +142,11 @@ function Menu() {
             )}
           </div>
 
-          {/* Right Side: Actions (Phone + Cart) */}
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          {/* Right Side: Actions (Orders + Cart) */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button className="icon-btn" onClick={() => navigate(`/orders/${storeId}/${table}`)} title="Order History">
+              <HistoryOutlined style={{ fontSize: '22px' }} />
+            </button>
             {cartTotalCount > 0 && (
               <button className="icon-btn" onClick={() => setCartDrawerVisible(true)}>
                 <ShoppingOutlined style={{ fontSize: '22px' }} />
@@ -276,7 +280,10 @@ function Menu() {
               <div className="cart-total-value">${cartTotal.toFixed(2)}</div>
             </div>
 
-            <button className="add-cart-btn-large">
+            <button className="add-cart-btn-large" onClick={() => {
+              setCartDrawerVisible(false);
+              navigate(`/review/${storeId}/${table}`);
+            }}>
               Place Order
             </button>
           </div>

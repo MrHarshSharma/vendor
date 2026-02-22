@@ -2,30 +2,23 @@ import { Button, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import GoogleButton from "react-google-button";
-import {
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-  signInWithPopup,
-} from "firebase/auth";
+import { signInWithPopup } from "firebase/auth";
 import { provider, db, auth } from "../firebase/setup";
-import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
-import { LiaRupeeSignSolid } from "react-icons/lia";
-
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import {
   clearCart,
- 
+  incrementQuantity,
+  decrementQuantity,
+  removeFromCart,
 } from "../actions/cartActions";
 import {
-    LeftCircleOutlined,
+  LeftOutlined,
+  MinusOutlined,
+  PlusOutlined,
+  DeleteOutlined,
+  HistoryOutlined,
 } from "@ant-design/icons";
-// import { doc, getDoc, setDoc } from "firebase/firestore";
-// import { db } from "../firebase/setup";
 import { useNavigate, useParams } from "react-router-dom";
-import { DOMContentLoaded, renderIngridents } from "../constants/commonFunctions";
-import { BiDish } from "react-icons/bi";
-import { MdOutlineTimer } from "react-icons/md";
-import { GiCampCookingPot } from "react-icons/gi";
-import CartActionButtons from "../components/CartActionButtons";
 import { setPageLoading } from "../actions/storeActions";
 import AppLayout from "./AppLayout";
 
@@ -38,8 +31,8 @@ const ReviewMenu = () => {
   let user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
-    if (cart.length == 0) {
-      dispatch(setPageLoading({payload:true}))
+    if (cart.length === 0) {
+      dispatch(setPageLoading({ payload: true }));
       navigate(-1);
     }
   }, [cart]);
@@ -47,17 +40,14 @@ const ReviewMenu = () => {
   const { storeId } = useParams();
   const { table } = useParams();
   const [storeDetails, setStoreDetails] = useState(null);
+
   const fetchConfigstore = async () => {
     try {
       const configRef = doc(db, "configstore", storeId);
       const docSnap = await getDoc(configRef);
 
       if (docSnap.exists()) {
-        console.log("this user data", docSnap.data());
         setStoreDetails(docSnap.data());
-      } else {
-        console.log("No such document!");
-        // return null;
       }
     } catch (error) {
       console.error("Error fetching document:", error);
@@ -68,13 +58,8 @@ const ReviewMenu = () => {
     fetchConfigstore();
   }, []);
 
-  useEffect(() => {
-    if (storeDetails !== null) {
-      // setTimeout(()=>{
-      DOMContentLoaded(storeDetails.primaryColor);
-      // },1000)
-    }
-  }, [storeDetails]);
+  const cartTotal = cart.reduce((acc, item) => acc + parseFloat(item.price) * item.quantity, 0);
+  const cartTotalCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   const placeOrder = async () => {
     let user = JSON.parse(localStorage.getItem("user"));
@@ -83,13 +68,12 @@ const ReviewMenu = () => {
       const docRef = doc(db, "orders", `order_${Date.now()}`);
       await setDoc(docRef, {
         storeId: storeId,
-        table:Number(table),
+        table: Number(table),
         customer: user,
         timeStamp: Date.now(),
         order: cart,
-        orderStatus:'new'
+        orderStatus: "new",
       });
-      //   }
 
       message.success("Order placed successfully");
       setTimeout(() => {
@@ -109,8 +93,6 @@ const ReviewMenu = () => {
       const user = await result.user;
       const userRef = await doc(db, "customer", `customer_${Date.now()}`);
 
-      // const docSnap = await getDoc(userRef);
-
       const userData = {
         storeUser: storeId,
         uid: user.uid,
@@ -126,7 +108,7 @@ const ReviewMenu = () => {
       localStorage.setItem("user", JSON.stringify(userData));
 
       placeOrder();
-    
+
       return user;
     } catch (error) {
       console.error("Error signing in with Google:", error);
@@ -140,110 +122,276 @@ const ReviewMenu = () => {
     }
   };
 
+  const styles = {
+    container: {
+      backgroundColor: "#1E2433",
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+    },
+    header: {
+      display: "flex",
+      alignItems: "center",
+      gap: "12px",
+      padding: "20px 16px",
+      borderBottom: "1px solid #2B3041",
+    },
+    backBtn: {
+      background: "none",
+      border: "none",
+      color: "white",
+      fontSize: "18px",
+      cursor: "pointer",
+      padding: "8px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    headerTitle: {
+      color: "white",
+      fontSize: "18px",
+      fontWeight: "600",
+      margin: 0,
+    },
+    headerSubtitle: {
+      color: "#9CA3AF",
+      fontSize: "14px",
+      marginLeft: "auto",
+    },
+    ordersBtn: {
+      background: "none",
+      border: "none",
+      color: "white",
+      fontSize: "20px",
+      cursor: "pointer",
+      padding: "8px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      marginLeft: "8px",
+    },
+    content: {
+      flex: 1,
+      padding: "16px",
+      overflowY: "auto",
+    },
+    itemCard: {
+      backgroundColor: "#2B3041",
+      borderRadius: "16px",
+      padding: "16px",
+      marginBottom: "12px",
+      display: "flex",
+      gap: "12px",
+    },
+    itemThumb: {
+      width: "80px",
+      height: "80px",
+      borderRadius: "12px",
+      objectFit: "cover",
+      backgroundColor: "#3B4256",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      flexShrink: 0,
+    },
+    itemInfo: {
+      flex: 1,
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+    },
+    itemName: {
+      color: "white",
+      fontSize: "16px",
+      fontWeight: "600",
+      marginBottom: "4px",
+    },
+    itemPrice: {
+      color: "#EF4444",
+      fontSize: "18px",
+      fontWeight: "700",
+    },
+    controlsRow: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginTop: "12px",
+    },
+    qtyControl: {
+      display: "flex",
+      alignItems: "center",
+      backgroundColor: "#3B4256",
+      borderRadius: "8px",
+      overflow: "hidden",
+    },
+    qtyBtn: {
+      width: "36px",
+      height: "36px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "none",
+      border: "none",
+      color: "white",
+      cursor: "pointer",
+      fontSize: "14px",
+    },
+    qtyValue: {
+      width: "36px",
+      textAlign: "center",
+      color: "white",
+      fontSize: "16px",
+      fontWeight: "600",
+    },
+    deleteBtn: {
+      width: "40px",
+      height: "40px",
+      backgroundColor: "rgba(239, 68, 68, 0.15)",
+      borderRadius: "10px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      border: "none",
+      cursor: "pointer",
+      color: "#EF4444",
+      fontSize: "18px",
+    },
+    footer: {
+      padding: "20px 16px",
+      borderTop: "1px solid #2B3041",
+      backgroundColor: "#1E2433",
+    },
+    totalRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: "20px",
+    },
+    totalLabel: {
+      color: "#9CA3AF",
+      fontSize: "16px",
+    },
+    totalValue: {
+      color: "#F59E0B",
+      fontSize: "28px",
+      fontWeight: "700",
+    },
+    placeOrderBtn: {
+      width: "100%",
+      height: "56px",
+      backgroundColor: "#F59E0B",
+      border: "none",
+      borderRadius: "12px",
+      color: "#1E2433",
+      fontSize: "18px",
+      fontWeight: "700",
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    googleBtnWrapper: {
+      display: "flex",
+      justifyContent: "center",
+    },
+  };
+
   return (
     <AppLayout>
-       <div
-      id="myElement"
-      style={{
-        padding: "10px",
-        backgroundColor: storeDetails?.primaryColor,
-        height: "90vh",
-        overflow:'auto'
-      }}
-    >
-      <div style={{ marginBottom: "20px" }}>
-        <span style={{ marginRight: "10px" }} onClick={() => navigate(-1)}>
-          <LeftCircleOutlined />
-        </span>
-        View and confirm order
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-        {cart.map((item, i) => (
-          <div style={{padding:'10px 5px', display: "flex", flexDirection: "row", gap: "10px",justifyContent:'space-between',  borderBottom:`1px solid ${storeDetails?.secondaryColor}`}}>
-            <div style={{ display: "flex", gap: "20px", width:'74%' }}>
-            {item?.imageUrl&&(
+      <div style={styles.container}>
+        {/* Header */}
+        <div style={styles.header}>
+          <button style={styles.backBtn} onClick={() => navigate(-1)}>
+            <LeftOutlined />
+          </button>
+          <h1 style={styles.headerTitle}>Your Requests</h1>
+          <span style={styles.headerSubtitle}>{cartTotalCount} items</span>
+          <button
+            style={styles.ordersBtn}
+            onClick={() => navigate(`/orders/${storeId}/${table}`)}
+            title="Order History"
+          >
+            <HistoryOutlined />
+          </button>
+        </div>
 
-<img
-src={item.imageUrl}
-style={{ width: "60px", borderRadius: "5px", height: "fit-content" }}
-/>
-)}
-              <span style={{ display: "flex", flexDirection: "column", gap:'5px' }}>
-                <span>{item.name}</span>
-                <span className="menu-item-description smallFont">{item.description}</span>
-                <div style={{display:'flex', gap:'10px'}}>
-                <span className="smallFont" style={{  display:'flex', alignItems:'center', gap:'2px' }} > <BiDish /> {item.servings}</span>
-          <span className="smallFont"  style={{ display:'flex', alignItems:'center',gap:'2px'  }}><MdOutlineTimer />{item.prep_time} mins</span>
-          </div>
-          <span className="smallFont" style={{ display:'flex', alignItems:'center', gap:'2px' }}>
-          <GiCampCookingPot />{renderIngridents(item.ingridents)}
-          </span>
-                <span style={{display:'flex', alignItems:'center'}}><LiaRupeeSignSolid/>{item.quantity * item.price}</span>
-              </span>
+        {/* Cart Items */}
+        <div style={styles.content}>
+          {cart.map((item, index) => (
+            <div style={styles.itemCard} key={index}>
+              {item.imageUrl ? (
+                <img src={item.imageUrl} alt={item.name} style={styles.itemThumb} />
+              ) : (
+                <div style={styles.itemThumb}>
+                  <span style={{ fontSize: "28px" }}>🥘</span>
+                </div>
+              )}
+
+              <div style={styles.itemInfo}>
+                <div>
+                  <div style={styles.itemName}>{item.name}</div>
+                  <div style={styles.itemPrice}>₹{item.price * item.quantity}</div>
+                </div>
+
+                <div style={styles.controlsRow}>
+                  <div style={styles.qtyControl}>
+                    <button
+                      style={styles.qtyBtn}
+                      onClick={() => dispatch(decrementQuantity(item.name))}
+                    >
+                      <MinusOutlined />
+                    </button>
+                    <span style={styles.qtyValue}>{item.quantity}</span>
+                    <button
+                      style={styles.qtyBtn}
+                      onClick={() => dispatch(incrementQuantity(item.name))}
+                    >
+                      <PlusOutlined />
+                    </button>
+                  </div>
+
+                  <button
+                    style={styles.deleteBtn}
+                    onClick={() => dispatch(removeFromCart(item.name))}
+                  >
+                    <DeleteOutlined />
+                  </button>
+                </div>
+              </div>
             </div>
-            
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginBottom: "10px",
-              }}
-            >
-             
-             <CartActionButtons item={item} />
-            </div>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div style={styles.footer}>
+          <div style={styles.totalRow}>
+            <span style={styles.totalLabel}>Total</span>
+            <span style={styles.totalValue}>₹{cartTotal.toFixed(2)}</span>
           </div>
-        ))}
-        <span
-          style={{
-            marginLeft: "auto",
-            // borderTop: `1px solid ${storeDetails?.secondaryColor}`,
-            display:'flex',
-            alignItems: 'center',
-          }}
-        >
-          Total is{" "}
-          <LiaRupeeSignSolid />
-          {cart.reduce((total, item) => total + item.price * item.quantity, 0)}{" "}
-           only
-        </span>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: "20px",
-          }}
-        >
+
           {!user ? (
-            <GoogleButton
-              label="Login to place your order"
-              onClick={() => handleSignIn()}
-              style={{ overFlow: "hidden", borderRadius: "5px" }}
-            />
+            <div style={styles.googleBtnWrapper}>
+              <GoogleButton
+                label="Login to place your order"
+                onClick={() => handleSignIn()}
+                style={{ borderRadius: "12px", overflow: "hidden", width: "100%" }}
+              />
+            </div>
           ) : (
             <Button
               loading={loading}
               onClick={placeOrder}
               style={{
-                marginLeft: "auto",
-                marginRight: "auto",
-                marginTop: "20px",
-                backgroundColor: storeDetails?.secondaryColor,
-                padding: "5px 10px",
-                borderRadius: "5px",
-                cursor: "pointer",
-                boxShadow: "0px 0px 7px -2px #000",
+                ...styles.placeOrderBtn,
+                opacity: loading ? 0.7 : 1,
               }}
             >
-              Confirm and place order
+              Place Order
             </Button>
           )}
         </div>
       </div>
-    </div>
     </AppLayout>
-   
   );
 };
 
