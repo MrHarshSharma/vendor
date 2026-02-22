@@ -333,7 +333,7 @@ const OrderHistory = () => {
                       <span style={styles.orderDate}>
                         {formatDate(order.timeStamp)}
                       </span>
-                      <div style={styles.orderId}>#{order.id.replace('order_', '')}</div>
+                      <div style={styles.orderId}>#{order.id.slice(-6).toUpperCase()}</div>
                     </div>
                     <span
                       style={{

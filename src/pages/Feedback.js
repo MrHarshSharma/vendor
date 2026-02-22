@@ -1,28 +1,28 @@
-import React from "react";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { db } from "../firebase/setup";
 import { doc, getDoc } from "firebase/firestore";
-import { useState } from "react";
-import { message, Form, Button } from "antd";
+import { message, Spin } from "antd";
 import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import { useDispatch } from "react-redux";
 import { setPageLoading } from "../actions/storeActions";
 import AppLayout from "./AppLayout";
 import { FaStar } from "react-icons/fa";
+import { CheckCircleOutlined, SmileOutlined } from "@ant-design/icons";
 
 const Feedback = () => {
   const { storeId, orderId, customerId } = useParams();
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [feedback, setFeedback] = useState([]);
-  const [alreadyFeedbackSubmitted, setAlreadyFeedbackSubmitted] =
-    useState(null);
-    const [loading, setLoading] = useState(false)
+  const [alreadyFeedbackSubmitted, setAlreadyFeedbackSubmitted] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [sudoState, setSudoState] = useState(0);
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(setPageLoading({ payload: true }));
   }, [dispatch]);
+
   useEffect(() => {
     const fetchOrder = async () => {
       try {
@@ -31,7 +31,6 @@ const Feedback = () => {
 
         if (docSnap.exists()) {
           setSelectedOrder(docSnap.data());
-
           setFeedback(
             docSnap.data().order.map((item) => ({
               itemName: item.name,
@@ -53,21 +52,18 @@ const Feedback = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderId, storeId, dispatch]);
 
-  // Handle rating change
   const handleRatingChange = (index, rating) => {
     const updatedFeedback = [...feedback];
     updatedFeedback[index].rating = rating;
     setFeedback(updatedFeedback);
   };
 
-  // Handle comment change
   const handleCommentChange = (index, comment) => {
     const updatedFeedback = [...feedback];
     updatedFeedback[index].comment = comment;
     setFeedback(updatedFeedback);
   };
 
-  // Handle form submission
   useEffect(() => {
     const checkFeedback = async () => {
       const feedbacksRef = collection(db, "feedbacks");
@@ -80,8 +76,9 @@ const Feedback = () => {
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
-        //   alert('Feedback already exists for this order.');
         setAlreadyFeedbackSubmitted(true);
+      } else {
+        setAlreadyFeedbackSubmitted(false);
       }
     };
 
@@ -91,9 +88,7 @@ const Feedback = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
-    // console.log("reached her");
-    // Add new feedback document
+    setLoading(true);
     try {
       const feedbacksRef = collection(db, "feedbacks");
       await addDoc(feedbacksRef, {
@@ -103,133 +98,242 @@ const Feedback = () => {
         feedback,
         timeStamp: new Date(),
       });
-      message.success("Thank you for you valuable feedback, please visit soon");
+      message.success("Thank you for your valuable feedback!");
       setSudoState((prev) => prev + 1);
     } catch (error) {
       console.error("Error adding document: ", error);
-      message.faiiled(
-        "Can't process your feedback at the moment. Please try again"
-      );
-    } finally{
-      setLoading(false)
+      message.error("Can't process your feedback at the moment. Please try again");
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const styles = {
+    container: {
+      backgroundColor: "#1E2433",
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+    },
+    header: {
+      padding: "24px 16px",
+      borderBottom: "1px solid #2B3041",
+      textAlign: "center",
+    },
+    headerTitle: {
+      color: "white",
+      fontSize: "22px",
+      fontWeight: "700",
+      margin: 0,
+    },
+    headerSubtitle: {
+      color: "#9CA3AF",
+      fontSize: "14px",
+      marginTop: "8px",
+    },
+    content: {
+      flex: 1,
+      padding: "16px",
+      overflowY: "auto",
+    },
+    itemCard: {
+      backgroundColor: "#2B3041",
+      borderRadius: "16px",
+      padding: "20px",
+      marginBottom: "16px",
+    },
+    itemName: {
+      color: "white",
+      fontSize: "18px",
+      fontWeight: "600",
+      marginBottom: "4px",
+    },
+    itemDescription: {
+      color: "#9CA3AF",
+      fontSize: "14px",
+      marginBottom: "20px",
+    },
+    ratingLabel: {
+      color: "#9CA3AF",
+      fontSize: "14px",
+      marginBottom: "12px",
+      display: "block",
+    },
+    starsContainer: {
+      display: "flex",
+      gap: "8px",
+      marginBottom: "20px",
+    },
+    star: {
+      fontSize: "28px",
+      cursor: "pointer",
+      transition: "transform 0.2s, color 0.2s",
+    },
+    starActive: {
+      color: "#F59E0B",
+    },
+    starInactive: {
+      color: "#3B4256",
+    },
+    commentLabel: {
+      color: "#9CA3AF",
+      fontSize: "14px",
+      marginBottom: "8px",
+      display: "block",
+    },
+    textarea: {
+      width: "100%",
+      backgroundColor: "#3B4256",
+      border: "none",
+      borderRadius: "12px",
+      padding: "14px",
+      color: "white",
+      fontSize: "14px",
+      resize: "vertical",
+      minHeight: "80px",
+      outline: "none",
+      boxSizing: "border-box",
+    },
+    footer: {
+      padding: "20px 16px",
+      borderTop: "1px solid #2B3041",
+    },
+    submitBtn: {
+      width: "100%",
+      height: "56px",
+      backgroundColor: "#22C55E",
+      border: "none",
+      borderRadius: "12px",
+      color: "white",
+      fontSize: "18px",
+      fontWeight: "700",
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "8px",
+    },
+    successCard: {
+      backgroundColor: "#2B3041",
+      borderRadius: "16px",
+      padding: "40px 20px",
+      textAlign: "center",
+      marginTop: "20px",
+    },
+    successIcon: {
+      fontSize: "64px",
+      color: "#22C55E",
+      marginBottom: "20px",
+    },
+    successTitle: {
+      color: "white",
+      fontSize: "20px",
+      fontWeight: "600",
+      marginBottom: "12px",
+    },
+    successText: {
+      color: "#9CA3AF",
+      fontSize: "14px",
+    },
+    loadingContainer: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "60px",
+    },
+  };
+
+  const renderStars = (index) => {
+    return [1, 2, 3, 4, 5].map((star) => (
+      <span
+        key={star}
+        style={{
+          ...styles.star,
+          ...(feedback?.[index]?.rating >= star ? styles.starActive : styles.starInactive),
+        }}
+        onClick={() => handleRatingChange(index, star)}
+      >
+        <FaStar />
+      </span>
+    ));
   };
 
   return (
     <AppLayout>
-      <div className="app-container">
-        <Form>
-          <span>Feedback Form</span>
-          {!alreadyFeedbackSubmitted && (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "5px",
-                boxShadow: "0px 0px 20px -15px #000",
-                borderRadius: "5px",
-                padding: "10px",
-                marginTop: "20px",
-              }}
-            >
-              <span>
-                You have submit the feedback. Order to get a chance to share
-                feedback again.
-              </span>
+      <div style={styles.container}>
+        {/* Header */}
+        <div style={styles.header}>
+          <h1 style={styles.headerTitle}>Share Your Feedback</h1>
+          <p style={styles.headerSubtitle}>
+            Help us improve by rating your experience
+          </p>
+        </div>
+
+        {/* Content */}
+        <div style={styles.content}>
+          {alreadyFeedbackSubmitted === null ? (
+            <div style={styles.loadingContainer}>
+              <Spin size="large" />
             </div>
-          )}
-          {alreadyFeedbackSubmitted && (
-            <form
-             
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "20px",
-                marginTop: "20px",
-              }}
-            >
-              {selectedOrder?.order?.map((item, index) => (
-                <div
-                  key={index}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "5px",
-                    boxShadow: "0px 0px 20px -15px #000",
-                    borderRadius: "5px",
-                    padding: "10px",
-                  }}
-                >
-                  <span>{item.name}</span>
-                  <span className="smallFont menu-item-description">
-                    {item.description}
-                  </span>
+          ) : alreadyFeedbackSubmitted === true ? (
+            <div style={styles.successCard}>
+              <CheckCircleOutlined style={styles.successIcon} />
+              <div style={styles.successTitle}>Feedback Already Submitted</div>
+              <div style={styles.successText}>
+                Thank you! You've already shared your feedback for this order.
+                <br />
+                Place another order to share feedback again.
+              </div>
+            </div>
+          ) : (
+            selectedOrder && (
+              <>
+                {selectedOrder.order.map((item, index) => (
+                  <div style={styles.itemCard} key={index}>
+                    <div style={styles.itemName}>{item.name}</div>
+                    {item.description && (
+                      <div style={styles.itemDescription}>{item.description}</div>
+                    )}
 
-                  <span style={{ marginTop: "20px" }}>
-                    Rating
-                    <span style={{ display: "flex", gap: "10px" }}>
-                      <span
-                        style={{
-                          color: feedback?.[index]?.rating >= 1 && "#02b96b",
-                        }}
-                        onClick={() => handleRatingChange(index, parseInt(1))}
-                      >
-                        <FaStar />
-                      </span>
-                      <span
-                        style={{
-                          color: feedback?.[index]?.rating >= 2 && "#02b96b",
-                        }}
-                        onClick={() => handleRatingChange(index, parseInt(2))}
-                      >
-                        <FaStar />
-                      </span>
-                      <span
-                        style={{
-                          color: feedback?.[index]?.rating >= 3 && "#02b96b",
-                        }}
-                        onClick={() => handleRatingChange(index, parseInt(3))}
-                      >
-                        <FaStar />
-                      </span>
-                      <span
-                        style={{
-                          color: feedback?.[index]?.rating >= 4 && "#02b96b",
-                        }}
-                        onClick={() => handleRatingChange(index, parseInt(4))}
-                      >
-                        <FaStar />
-                      </span>
-                      <span
-                        style={{
-                          color: feedback?.[index]?.rating >= 5 && "#02b96b",
-                        }}
-                        onClick={() => handleRatingChange(index, parseInt(5))}
-                      >
-                        <FaStar />
-                      </span>
-                    </span>
-                  </span>
-                  <span>
-                    Any comments <br />
+                    <span style={styles.ratingLabel}>How was it?</span>
+                    <div style={styles.starsContainer}>{renderStars(index)}</div>
+
+                    <span style={styles.commentLabel}>Any comments? (optional)</span>
                     <textarea
-                      value={feedback?.[index]?.comment}
-                      onChange={(e) =>
-                        handleCommentChange(index, e.target.value)
-                      }
-                      style={{ width: "100%" }}
+                      style={styles.textarea}
+                      placeholder="Share your thoughts..."
+                      value={feedback?.[index]?.comment || ""}
+                      onChange={(e) => handleCommentChange(index, e.target.value)}
                     />
-                  </span>
-                  <br />
-                </div>
-              ))}
-
-              <Button type="primary"  onClick={handleSubmit} loading={loading}>
-                Submit feedback
-              </Button>
-            </form>
+                  </div>
+                ))}
+              </>
+            )
           )}
-        </Form>
+        </div>
+
+        {/* Footer - Submit Button */}
+        {alreadyFeedbackSubmitted === false && selectedOrder && (
+          <div style={styles.footer}>
+            <button
+              style={{
+                ...styles.submitBtn,
+                opacity: loading ? 0.7 : 1,
+                cursor: loading ? "not-allowed" : "pointer",
+              }}
+              onClick={handleSubmit}
+              disabled={loading}
+            >
+              {loading ? (
+                <Spin size="small" />
+              ) : (
+                <>
+                  <SmileOutlined /> Submit Feedback
+                </>
+              )}
+            </button>
+          </div>
+        )}
       </div>
     </AppLayout>
   );
