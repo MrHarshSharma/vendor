@@ -27,7 +27,7 @@ function Dashboard() {
   const navigate = useNavigate();
   const [primaryColor, setPrimaryColor] = useState("#ffffff");
   const [secondaryColor, setSecondaryColor] = useState("#ffffff");
-    
+
   const fetchConfigstore = async () => {
     try {
       if (!user) {
@@ -43,13 +43,13 @@ function Dashboard() {
         setStoreDetails(wholeData);
         setPrimaryColor(wholeData.primaryColor)
         setSecondaryColor(wholeData.secondaryColor)
-        form.setFieldsValue({ restaurantName: wholeData.restaurantName }); 
+        form.setFieldsValue({ restaurantName: wholeData.restaurantName });
         form.setFieldsValue({ restaurantType: wholeData.restaurantType });
-        form.setFieldsValue({ primarycolor:  wholeData.primaryColor }); 
-        form.setFieldsValue({ secondarycolor: wholeData.secondaryColor }); 
-        form.setFieldsValue({ tagline: wholeData.tagline }); 
-        form.setFieldsValue({ subtagline: wholeData.subtagline }); 
-        
+        form.setFieldsValue({ primarycolor: wholeData.primaryColor });
+        form.setFieldsValue({ secondarycolor: wholeData.secondaryColor });
+        form.setFieldsValue({ tagline: wholeData.tagline });
+        form.setFieldsValue({ subtagline: wholeData.subtagline });
+
       } else {
         console.log("No such document!");
         // return null;
@@ -65,11 +65,11 @@ function Dashboard() {
   }, []);
 
   const handlePrimaryColorChange = (color) => {
- 
+
     setPrimaryColor(color.hex);
     form.setFieldsValue({ primarycolor: color.hex });
   };
-  
+
   const handleSecondaryColorChange = (color) => {
     setSecondaryColor(color.hex);
     form.setFieldsValue({ secondarycolor: color.hex });
@@ -105,7 +105,7 @@ function Dashboard() {
     });
   };
 
-  
+
 
   const handleSubmit = async (values) => {
     setLoading(true);
@@ -136,18 +136,18 @@ function Dashboard() {
       // Update the document if it exists
       await updateDoc(configRef, configStoreData);
       message.success("store updated");
-   
+
     } else {
       // Create the document with the specified field if it doesn't exist
       await setDoc(configRef, configStoreData);
       message.success("store created, please add menu");
-    setTimeout(() => {
-      navigate("/menu");
-    }, 2000);
+      setTimeout(() => {
+        navigate("/menu");
+      }, 2000);
     }
     // await setDoc(configRef, configStoreData);
     setLoading(false);
-    
+
   };
 
   const handleUpload = ({ file, onSuccess }) => {
@@ -179,8 +179,7 @@ function Dashboard() {
             <Select placeholder="Select a restaurant type">
               <Option value="cafe">Cafe</Option>
               <Option value="restaurant">Restaurant</Option>
-              <Option value="dabha">Dabha</Option>
-              <Option value="thela">Thela</Option>
+              <Option value="hotel">Hotel</Option>
             </Select>
           </Form.Item>
           <Form.Item
@@ -249,12 +248,12 @@ function Dashboard() {
                     "block";
                 }}
                 style={{ backgroundColor: secondaryColor }}
-                // readOnly
+              // readOnly
               />
             </Form.Item>
             <div
               id="secondary-color-picker"
-              style={{ display: "none",  }}
+              style={{ display: "none", }}
             >
               <SketchPicker color={secondaryColor} onChange={handleSecondaryColorChange} />
               <span
