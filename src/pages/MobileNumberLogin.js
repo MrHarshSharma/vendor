@@ -13,20 +13,9 @@ const MobileNumberLogin = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [OTPloading, setOTPLoading] = useState(false);
-  const [phone, setPhone] = useState("");
+  const [, setPhone] = useState("");
   const [user, setUser] = useState(null);
   const [isOtpSent, setOtpSent] = useState(false);
-const googleSignIn = async () => {
-  try{
-    const results = await signInWithPopup(auth, provider)
-    console.log(results)
-    localStorage.setItem('token',results.user.accessToken)
-    localStorage.setItem('user',JSON.stringify(results.user))
-    navigate("/")
-  }catch(e){
-    console.error(e)
-  }
-}
   const sendOtp = async (values) => {
     try {
       setLoading(true);
@@ -75,7 +64,7 @@ const googleSignIn = async () => {
 
       const docSnap = await getDoc(userRef);
       
-      if(user.email == typesData[0].email){
+      if(user.email === typesData[0].email){
         message.success(`Login successful`);
       }else{
         message.error(`${user.email} is not authorized to login`);

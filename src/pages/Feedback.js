@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { db } from "../firebase/setup";
 import { doc, getDoc } from "firebase/firestore";
 import { useState } from "react";
@@ -22,7 +22,7 @@ const Feedback = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setPageLoading({ payload: true }));
-  }, []);
+  }, [dispatch]);
   useEffect(() => {
     const fetchOrder = async () => {
       try {
@@ -50,7 +50,8 @@ const Feedback = () => {
     };
 
     fetchOrder();
-  }, [orderId, storeId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orderId, storeId, dispatch]);
 
   // Handle rating change
   const handleRatingChange = (index, rating) => {
@@ -85,7 +86,8 @@ const Feedback = () => {
     };
 
     checkFeedback();
-  }, [sudoState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sudoState, storeId, orderId, customerId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -1,38 +1,36 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Menu, Layout } from "antd";
 import {
-  ShoppingCartOutlined,
   UserOutlined,
   HomeOutlined,
-  HeartOutlined,
-  ShopOutlined,
   ProductOutlined,
-MenuOutlined,
+  MenuOutlined,
   SettingOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
 
 import { useNavigate } from "react-router-dom";
 
-const { Header, Content } = Layout;
+const { Header } = Layout;
 
 const MainMenu = () => {
   const navigate = useNavigate();
   const [hideMenu, setHideMenu] = useState(false);
   const [prevScrollPos, setPrevScrollPos] = useState(window.pageYOffset);
 
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     const currentScrollPos = window.pageYOffset;
     const visible = prevScrollPos > currentScrollPos || currentScrollPos < 10;
     setHideMenu(visible);
     setPrevScrollPos(currentScrollPos);
-  };
+  }, [prevScrollPos]);
+
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [prevScrollPos]);
+  }, [handleScroll]);
 
   useEffect(() => {
     setHideMenu(true);

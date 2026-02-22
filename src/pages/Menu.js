@@ -1,34 +1,25 @@
 import React, { useState, useEffect } from "react";
 import AppLayout from "./AppLayout";
 import {
-  PlusCircleOutlined, RightCircleOutlined, DownOutlined, CloseOutlined,
-  MinusOutlined, PlusOutlined, PhoneOutlined, ShoppingOutlined, DeleteOutlined,
+  DownOutlined,
+  MinusOutlined, PlusOutlined, ShoppingOutlined, DeleteOutlined,
   HistoryOutlined
 } from "@ant-design/icons";
-import { Card, message, Dropdown, Space, Drawer, Switch } from "antd";
+import { Dropdown, Drawer, Switch } from "antd";
 import { db } from "../firebase/setup";
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart, incrementQuantity, decrementQuantity, removeFromCart, clearCart } from "../actions/cartActions";
-
-import { DOMContentLoaded, hexToRgba } from "../constants/commonFunctions";
-// import "./Menu.css";  // Assuming you create a Menu.css file for custom styles
+import { incrementQuantity, decrementQuantity, removeFromCart, clearCart } from "../actions/cartActions";
 
 import MenuItem from "../components/MenuItem";
 import { addStore, setPageLoading } from "../actions/storeActions";
-import Withlove from "../components/Withlove";
 
 function Menu() {
   const { storeId } = useParams();
   const { table } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const empyMenu = {
-    maincourse: [],
-    starter: [],
-    beverage: [],
-  };
 
   const [activeCategory, setActiveCategory] = useState("Categories");
   const [showVeg, setShowVeg] = useState(true);
@@ -70,6 +61,7 @@ function Menu() {
 
   useEffect(() => {
     fetchConfigstore();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const scrollToSection = (sectionId) => {

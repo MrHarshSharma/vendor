@@ -1,36 +1,19 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { addToCart, decrementQuantity, incrementQuantity, removeFromCart } from "../actions/cartActions";
 import { useDispatch, useSelector } from "react-redux";
-import { message } from 'antd'
-import { LiaRupeeSignSolid } from "react-icons/lia";
-import { hexToRgba, renderIngridents } from "../constants/commonFunctions";
 import { BiDish } from "react-icons/bi";
 import { MdOutlineTimer } from "react-icons/md";
-import { GiCampCookingPot } from "react-icons/gi";
 import {
-  PlusCircleOutlined,
-  MinusCircleOutlined,
-  DeleteOutlined,
-  LeftCircleOutlined,
   MinusOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { BiFoodTag } from "react-icons/bi";
-import CartActionButtons from "./CartActionButtons";
 
-const MenuItem = ({ item, inCart, storeDetails, onOpenDrawer }) => {
+const MenuItem = ({ item }) => {
   const dispatch = useDispatch();
-
-  const handleAddToCart = (item) => {
-    dispatch(addToCart(item));
-  };
 
   const cart = useSelector(state => state.cartReducer.cart);
   const cartItem = cart.find(cartItem => cartItem.name === item.name);
   const quantity = cartItem ? cartItem.quantity : 0;
-
-  // Derive Veg status from multiple potential keys
-  const isVeg = item.veg_nonveg;
 
 
 

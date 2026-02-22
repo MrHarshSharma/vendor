@@ -3,8 +3,6 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import Dashboard from "./pages/Dashboard";
-
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -12,8 +10,6 @@ import {
   Route,
 } from "react-router-dom";
 import { ConfigProvider } from "antd";
-import MobileNumberLogin from "./pages/MobileNumberLogin";
-import Protected from "./components/Protected";
 import Menu from "./pages/Menu";
 import { Provider } from "react-redux";
 import store from "./store";

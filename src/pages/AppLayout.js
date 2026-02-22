@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import SpalashScreen from "../components/SpalashScreen";
-import ToolHeader from "../components/ToolHeader";
 import { useSelector } from "react-redux";
 import Withlove from "../components/Withlove";
 

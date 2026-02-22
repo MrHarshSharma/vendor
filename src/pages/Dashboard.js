@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import AppLayout from "./AppLayout";
 import { Form, Input, Button, Select, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { generateGUID } from "../utils";
 import {
   getStorage,
   ref,
@@ -18,7 +17,7 @@ import { SketchPicker } from "react-color";
 
 function Dashboard() {
   const { Option } = Select;
-  const [storeDetails, setStoreDetails] = useState({});
+  const [, setStoreDetails] = useState({});
   let user = JSON.parse(localStorage.getItem("user"));
 
   const [form] = Form.useForm();
@@ -28,8 +27,7 @@ function Dashboard() {
   const navigate = useNavigate();
   const [primaryColor, setPrimaryColor] = useState("#ffffff");
   const [secondaryColor, setSecondaryColor] = useState("#ffffff");
-  const [sudoState, setSudoState] = useState(0)
-  
+    
   const fetchConfigstore = async () => {
     try {
       if (!user) {
@@ -63,6 +61,7 @@ function Dashboard() {
 
   useEffect(() => {
     fetchConfigstore();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handlePrimaryColorChange = (color) => {
