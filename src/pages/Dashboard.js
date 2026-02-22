@@ -164,14 +164,14 @@ function Dashboard() {
           <h1 className="app-bold">Basic details</h1>
           <Form.Item
             name="restaurantName"
-            label="Restaurant Name"
+            label="Name"
             rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="restaurantType"
-            label="Restaurant Type"
+            label="Type"
             rules={[
               { required: true, message: "Please select a restaurant type!" },
             ]}
