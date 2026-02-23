@@ -4,7 +4,15 @@ import { useDispatch, useSelector } from "react-redux";
 import GoogleButton from "react-google-button";
 import { signInWithPopup } from "firebase/auth";
 import { provider, db, auth } from "../firebase/setup";
-import { doc, setDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  updateDoc
+} from "firebase/firestore";
 import {
   clearCart,
   incrementQuantity,
@@ -46,17 +54,86 @@ const ReviewMenu = () => {
     let user = JSON.parse(localStorage.getItem("user"));
     setLoading(true);
     try {
-      const docRef = doc(db, "orders", `order_${Date.now()}`);
-      await setDoc(docRef, {
-        storeId: storeId,
-        table: Number(table),
-        customer: user,
-        timeStamp: Date.now(),
-        order: cart,
-        orderStatus: "new",
-      });
+      // Check for existing active order (status = "new" or "accept") for same customer & table
+      const ordersRef = collection(db, "orders");
 
-      message.success("Order placed successfully");
+      // First check for "accept" (in-progress) orders
+      let existingOrderQuery = query(
+        ordersRef,
+        where("storeId", "==", storeId),
+        where("table", "==", Number(table)),
+        where("customer.uid", "==", user.uid),
+        where("orderStatus", "==", "accept")
+      );
+
+      let existingOrdersSnapshot = await getDocs(existingOrderQuery);
+
+      // If no in-progress order, check for "new" orders (not yet accepted)
+      if (existingOrdersSnapshot.empty) {
+        existingOrderQuery = query(
+          ordersRef,
+          where("storeId", "==", storeId),
+          where("table", "==", Number(table)),
+          where("customer.uid", "==", user.uid),
+          where("orderStatus", "==", "new")
+        );
+        existingOrdersSnapshot = await getDocs(existingOrderQuery);
+      }
+
+      if (!existingOrdersSnapshot.empty) {
+        // Found an existing in-progress order - append new items to it
+        const existingOrderDoc = existingOrdersSnapshot.docs[0];
+        const existingOrderData = existingOrderDoc.data();
+        const existingItems = existingOrderData.order || [];
+
+        // Merge cart items with existing order items
+        const mergedItems = [...existingItems];
+        const currentTimestamp = Date.now();
+
+        cart.forEach((newItem) => {
+          const existingItemIndex = mergedItems.findIndex(
+            (item) => item.name === newItem.name && !item.addedAt
+          );
+
+          if (existingItemIndex !== -1) {
+            // Item already exists and hasn't been marked as new - update quantity
+            // Add the extra quantity as a new entry to track separately
+            mergedItems.push({
+              ...newItem,
+              addedAt: currentTimestamp,
+            });
+          } else {
+            // New item - add to order with timestamp
+            mergedItems.push({
+              ...newItem,
+              addedAt: currentTimestamp,
+            });
+          }
+        });
+
+        // Update the existing order with merged items
+        const orderRef = doc(db, "orders", existingOrderDoc.id);
+        await updateDoc(orderRef, {
+          order: mergedItems,
+          lastUpdated: currentTimestamp,
+        });
+
+        message.success("Items added to your existing order!");
+      } else {
+        // No existing in-progress order - create a new one
+        const docRef = doc(db, "orders", `order_${Date.now()}`);
+        await setDoc(docRef, {
+          storeId: storeId,
+          table: Number(table),
+          customer: user,
+          timeStamp: Date.now(),
+          order: cart,
+          orderStatus: "new",
+        });
+
+        message.success("Order placed successfully");
+      }
+
       setTimeout(() => {
         dispatch(clearCart());
       }, 1000);

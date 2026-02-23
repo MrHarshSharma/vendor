@@ -334,6 +334,15 @@ const OrderHistory = () => {
                         {formatDate(order.timeStamp)}
                       </span>
                       <div style={styles.orderId}>#{order.id.slice(-6).toUpperCase()}</div>
+                      {order.lastUpdated && (
+                        <div style={{
+                          fontSize: "11px",
+                          color: "#8B5CF6",
+                          marginTop: "4px",
+                        }}>
+                          + Items added at {new Date(order.lastUpdated).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                        </div>
+                      )}
                     </div>
                     <span
                       style={{
