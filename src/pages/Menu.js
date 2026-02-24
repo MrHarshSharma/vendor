@@ -5,12 +5,23 @@ import {
   MinusOutlined, PlusOutlined, ShoppingOutlined, DeleteOutlined,
   HistoryOutlined
 } from "@ant-design/icons";
-import { Dropdown, Drawer, Switch } from "antd";
-import { db } from "../firebase/setup";
-import { doc, getDoc } from "firebase/firestore";
+import { Dropdown, Drawer, Switch, Button, message } from "antd";
+import { db, auth, provider } from "../firebase/setup";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  updateDoc
+} from "firebase/firestore";
+import { signInWithPopup } from "firebase/auth";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { incrementQuantity, decrementQuantity, removeFromCart, clearCart } from "../actions/cartActions";
+import GoogleButton from "react-google-button";
 
 import MenuItem from "../components/MenuItem";
 import { addStore, setPageLoading } from "../actions/storeActions";
@@ -27,12 +38,13 @@ function Menu() {
 
   // Drawer State & Cart State
   const [cartDrawerVisible, setCartDrawerVisible] = useState(false);
-
+  const [orderLoading, setOrderLoading] = useState(false);
+  const [user, setUser] = useState(() => {
+    const stored = localStorage.getItem("user");
+    return stored ? JSON.parse(stored) : null;
+  });
 
   const cart = useSelector((state) => state.cartReducer.cart);
-  useEffect(() => {
-    console.log(cart);
-  }, [cart]);
 
   const [storeDetails, setStoreDetails] = useState(null);
 
@@ -63,6 +75,133 @@ function Menu() {
     fetchConfigstore();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Place order function
+  const placeOrder = async (currentUser) => {
+    const orderUser = currentUser || user;
+    if (!orderUser) {
+      message.error("Please sign in to place an order");
+      return;
+    }
+
+    if (cart.length === 0) {
+      message.error("Your cart is empty");
+      return;
+    }
+
+    setOrderLoading(true);
+    try {
+      // Check for existing active order (status = "new" or "accept") for same customer & table
+      const ordersRef = collection(db, "orders");
+
+      // First check for "accept" (in-progress) orders
+      let existingOrderQuery = query(
+        ordersRef,
+        where("storeId", "==", storeId),
+        where("table", "==", Number(table)),
+        where("customer.uid", "==", orderUser.uid),
+        where("orderStatus", "==", "accept")
+      );
+
+      let existingOrdersSnapshot = await getDocs(existingOrderQuery);
+
+      // If no in-progress order, check for "new" orders (not yet accepted)
+      if (existingOrdersSnapshot.empty) {
+        existingOrderQuery = query(
+          ordersRef,
+          where("storeId", "==", storeId),
+          where("table", "==", Number(table)),
+          where("customer.uid", "==", orderUser.uid),
+          where("orderStatus", "==", "new")
+        );
+        existingOrdersSnapshot = await getDocs(existingOrderQuery);
+      }
+
+      if (!existingOrdersSnapshot.empty) {
+        // Found an existing in-progress order - append new items to it
+        const existingOrderDoc = existingOrdersSnapshot.docs[0];
+        const existingOrderData = existingOrderDoc.data();
+        const existingItems = existingOrderData.order || [];
+
+        // Merge cart items with existing order items
+        const mergedItems = [...existingItems];
+        const currentTimestamp = Date.now();
+
+        cart.forEach((newItem) => {
+          // Add new items with timestamp to track separately
+          mergedItems.push({
+            ...newItem,
+            addedAt: currentTimestamp,
+          });
+        });
+
+        // Update the existing order with merged items
+        const orderRef = doc(db, "orders", existingOrderDoc.id);
+        await updateDoc(orderRef, {
+          order: mergedItems,
+          lastUpdated: currentTimestamp,
+        });
+
+        message.success("Items added to your existing order!");
+      } else {
+        // No existing in-progress order - create a new one
+        const docRef = doc(db, "orders", `order_${Date.now()}`);
+        await setDoc(docRef, {
+          storeId: storeId,
+          table: Number(table),
+          customer: orderUser,
+          timeStamp: Date.now(),
+          order: cart,
+          orderStatus: "new",
+        });
+
+        message.success("Order placed successfully!");
+      }
+
+      // Clear cart after successful order
+      setTimeout(() => {
+        dispatch(clearCart());
+        setCartDrawerVisible(false);
+      }, 500);
+    } catch (error) {
+      console.error("Error placing order", error);
+      message.error("Error placing order. Please try again.");
+    } finally {
+      setOrderLoading(false);
+    }
+  };
+
+  // Sign in with Google and place order
+  const signInWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const firebaseUser = result.user;
+      const customerRef = doc(db, "customer", `customer_${Date.now()}`);
+
+      const userData = {
+        storeUser: storeId,
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        displayName: firebaseUser.displayName,
+        photoURL: firebaseUser.photoURL,
+        createdAt: new Date(),
+      };
+
+      await setDoc(customerRef, userData);
+
+      localStorage.setItem("token", result.user.accessToken);
+      localStorage.setItem("user", JSON.stringify(userData));
+      setUser(userData);
+
+      // Place order after successful sign in
+      await placeOrder(userData);
+
+      return firebaseUser;
+    } catch (error) {
+      console.error("Error signing in with Google:", error);
+      message.error("Failed to sign in. Please try again.");
+    }
+  };
 
   const scrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
@@ -244,7 +383,7 @@ function Menu() {
                 <div className="cart-item-info">
                   <div>
                     <div className="cart-item-title">{item.name}</div>
-                    <div className="cart-item-price">${item.price}</div>
+                    <div className="cart-item-price">₹{item.price * item.quantity}</div>
                   </div>
 
                   <div className="cart-controls-row">
@@ -269,15 +408,38 @@ function Menu() {
           <div className="cart-footer">
             <div className="cart-total-row">
               <div className="cart-total-label">Total</div>
-              <div className="cart-total-value">${cartTotal.toFixed(2)}</div>
+              <div className="cart-total-value">₹{cartTotal.toFixed(2)}</div>
             </div>
 
-            <button className="add-cart-btn-large" onClick={() => {
-              setCartDrawerVisible(false);
-              navigate(`/review/${storeId}/${table}`);
-            }}>
-              Place Order
-            </button>
+            {!user ? (
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <GoogleButton
+                  label="Sign in to place order"
+                  onClick={signInWithGoogle}
+                  style={{ borderRadius: '12px', overflow: 'hidden', width: '100%' }}
+                />
+              </div>
+            ) : (
+              <Button
+                loading={orderLoading}
+                onClick={() => placeOrder()}
+                className="add-cart-btn-large"
+                style={{
+                  width: '100%',
+                  height: '56px',
+                  backgroundColor: '#F59E0B',
+                  border: 'none',
+                  borderRadius: '12px',
+                  color: '#1E2433',
+                  fontSize: '18px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  opacity: orderLoading ? 0.7 : 1,
+                }}
+              >
+                Place Order
+              </Button>
+            )}
           </div>
         </Drawer>
       </div >
