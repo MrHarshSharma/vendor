@@ -26,6 +26,8 @@ import GoogleButton from "react-google-button";
 import MenuItem from "../components/MenuItem";
 import { addStore, setPageLoading } from "../actions/storeActions";
 
+const getCartItemId = (item) => `${item.name}_${item.price}`;
+
 function Menu() {
   const { storeId } = useParams();
   const { table } = useParams();
@@ -383,20 +385,20 @@ function Menu() {
                 <div className="cart-item-info">
                   <div>
                     <div className="cart-item-title">{item.name}</div>
-                    <div className="cart-item-price">₹{item.price * item.quantity}</div>
+                    <div className="cart-item-price">{storeDetails?.currencySymbol || "₹"}{item.price * item.quantity}</div>
                   </div>
 
                   <div className="cart-controls-row">
                     <div className="qty-control-sm">
-                      <div className="qty-btn-sm" onClick={() => dispatch(decrementQuantity(item.name))}>
+                      <div className="qty-btn-sm" onClick={() => dispatch(decrementQuantity(getCartItemId(item)))}>
                         <MinusOutlined style={{ fontSize: '12px' }} />
                       </div>
                       <div className="qty-val-sm">{item.quantity}</div>
-                      <div className="qty-btn-sm" onClick={() => dispatch(incrementQuantity(item.name))}>
+                      <div className="qty-btn-sm" onClick={() => dispatch(incrementQuantity(getCartItemId(item)))}>
                         <PlusOutlined style={{ fontSize: '12px' }} />
                       </div>
                     </div>
-                    <div className="delete-btn" onClick={() => dispatch(removeFromCart(item.name))}>
+                    <div className="delete-btn" onClick={() => dispatch(removeFromCart(getCartItemId(item)))}>
                       <DeleteOutlined />
                     </div>
                   </div>
@@ -408,7 +410,7 @@ function Menu() {
           <div className="cart-footer">
             <div className="cart-total-row">
               <div className="cart-total-label">Total</div>
-              <div className="cart-total-value">₹{cartTotal.toFixed(2)}</div>
+              <div className="cart-total-value">{storeDetails?.currencySymbol || "₹"}{cartTotal.toFixed(2)}</div>
             </div>
 
             {!user ? (

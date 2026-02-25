@@ -30,8 +30,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { setPageLoading } from "../actions/storeActions";
 import AppLayout from "./AppLayout";
 
+const getCartItemId = (item) => `${item.name}_${item.price}`;
+
 const ReviewMenu = () => {
   const cart = useSelector((state) => state.cartReducer.cart);
+  const storeDetails = useSelector((state) => state.storeReducer.store);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -92,7 +95,7 @@ const ReviewMenu = () => {
 
         cart.forEach((newItem) => {
           const existingItemIndex = mergedItems.findIndex(
-            (item) => item.name === newItem.name && !item.addedAt
+            (item) => getCartItemId(item) === getCartItemId(newItem) && !item.addedAt
           );
 
           if (existingItemIndex !== -1) {
@@ -388,21 +391,21 @@ const ReviewMenu = () => {
               <div style={styles.itemInfo}>
                 <div>
                   <div style={styles.itemName}>{item.name}</div>
-                  <div style={styles.itemPrice}>₹{item.price * item.quantity}</div>
+                  <div style={styles.itemPrice}>{storeDetails?.currencySymbol || "₹"}{item.price * item.quantity}</div>
                 </div>
 
                 <div style={styles.controlsRow}>
                   <div style={styles.qtyControl}>
                     <button
                       style={styles.qtyBtn}
-                      onClick={() => dispatch(decrementQuantity(item.name))}
+                      onClick={() => dispatch(decrementQuantity(getCartItemId(item)))}
                     >
                       <MinusOutlined />
                     </button>
                     <span style={styles.qtyValue}>{item.quantity}</span>
                     <button
                       style={styles.qtyBtn}
-                      onClick={() => dispatch(incrementQuantity(item.name))}
+                      onClick={() => dispatch(incrementQuantity(getCartItemId(item)))}
                     >
                       <PlusOutlined />
                     </button>
@@ -410,7 +413,7 @@ const ReviewMenu = () => {
 
                   <button
                     style={styles.deleteBtn}
-                    onClick={() => dispatch(removeFromCart(item.name))}
+                    onClick={() => dispatch(removeFromCart(getCartItemId(item)))}
                   >
                     <DeleteOutlined />
                   </button>
@@ -424,7 +427,7 @@ const ReviewMenu = () => {
         <div style={styles.footer}>
           <div style={styles.totalRow}>
             <span style={styles.totalLabel}>Total</span>
-            <span style={styles.totalValue}>₹{cartTotal.toFixed(2)}</span>
+            <span style={styles.totalValue}>{storeDetails?.currencySymbol || "₹"}{cartTotal.toFixed(2)}</span>
           </div>
 
           {!user ? (

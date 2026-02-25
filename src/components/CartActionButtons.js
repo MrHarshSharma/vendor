@@ -12,8 +12,11 @@ import {
 } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 
+const getCartItemId = (item) => `${item.name}_${item.price}`;
+
 const CartActionButtons = ({ item }) => {
   const dispatch = useDispatch();
+  const itemId = getCartItemId(item);
   return (
     <div
       style={{
@@ -37,14 +40,14 @@ const CartActionButtons = ({ item }) => {
         }}
       >
         {item.quantity > 1 && (
-          <span  onClick={() => dispatch(decrementQuantity(item.name))}>
+          <span  onClick={() => dispatch(decrementQuantity(itemId))}>
             <MinusCircleOutlined className="smallFont" />
           </span>
         )}
         <span  className="smallFont">{item.quantity}</span>
         <span
-          
-          onClick={() => dispatch(incrementQuantity(item.name))}
+
+          onClick={() => dispatch(incrementQuantity(itemId))}
         >
           <PlusCircleOutlined className="smallFont" />
         </span>
@@ -54,7 +57,7 @@ const CartActionButtons = ({ item }) => {
         <span
           className="smallFont"
           style={{ display: "flex", alignItems: "center", gap: "5px" }}
-          onClick={() => dispatch(removeFromCart(item.name))}
+          onClick={() => dispatch(removeFromCart(itemId))}
         >
           <DeleteOutlined className="smallFont" />
           Remove

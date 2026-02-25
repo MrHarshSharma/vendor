@@ -8,11 +8,14 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 
-const MenuItem = ({ item }) => {
+const getCartItemId = (item) => `${item.name}_${item.price}`;
+
+const MenuItem = ({ item, storeDetails }) => {
   const dispatch = useDispatch();
+  const itemId = getCartItemId(item);
 
   const cart = useSelector(state => state.cartReducer.cart);
-  const cartItem = cart.find(cartItem => cartItem.name === item.name);
+  const cartItem = cart.find(cartItem => getCartItemId(cartItem) === itemId);
   const quantity = cartItem ? cartItem.quantity : 0;
 
 
@@ -54,9 +57,9 @@ const MenuItem = ({ item }) => {
                 onClick={(e) => {
                   e.stopPropagation();
                   if (quantity === 1) {
-                    dispatch(removeFromCart(item.name));
+                    dispatch(removeFromCart(itemId));
                   } else {
-                    dispatch(decrementQuantity(item.name));
+                    dispatch(decrementQuantity(itemId));
                   }
                 }}
               >
@@ -69,7 +72,7 @@ const MenuItem = ({ item }) => {
                 style={{ color: '#1F2332', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '0 4px' }}
                 onClick={(e) => {
                   e.stopPropagation();
-                  dispatch(incrementQuantity(item.name));
+                  dispatch(incrementQuantity(itemId));
                 }}
               >
                 <PlusOutlined />
@@ -101,7 +104,7 @@ const MenuItem = ({ item }) => {
 
         <div className="card-footer" style={{ marginTop: '0' }}>
           <div className="card-price">
-            <span style={{ fontSize: '14px', marginRight: '2px' }}>$</span>{item.price}
+            <span style={{ fontSize: '14px', marginRight: '2px' }}>{storeDetails?.currencySymbol || "₹"}</span>{item.price}
           </div>
         </div>
       </div>
