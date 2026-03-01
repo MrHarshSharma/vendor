@@ -24,6 +24,7 @@ import { incrementQuantity, decrementQuantity, removeFromCart, clearCart } from 
 import GoogleButton from "react-google-button";
 
 import MenuItem from "../components/MenuItem";
+import ChatBot from "../components/ChatBot";
 import { addStore, setPageLoading } from "../actions/storeActions";
 
 const getCartItemId = (item) => `${item.name}_${item.price}`;
@@ -444,6 +445,11 @@ function Menu() {
             )}
           </div>
         </Drawer>
+
+        {/* AI Menu Assistant ChatBot */}
+        {storeDetails && (
+          <ChatBot storeDetails={storeDetails} storeId={storeId} />
+        )}
       </div >
     </AppLayout >
   );
