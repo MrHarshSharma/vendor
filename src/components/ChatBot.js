@@ -200,19 +200,26 @@ ${menuContext}
 
 RULES:
 1. Return ONLY item names in quotes, separated by commas
-2. Return 3-4 items that match the customer's request
-3. NO explanations, NO prices, ONLY names in quotes
-4. If customer asks for "vegetarian" or "veg" - return ONLY items marked [Vegetarian]
-5. If customer asks for "non-veg" - return ONLY items marked [Non-Vegetarian]
-6. If customer asks for "starters" - return appetizer/starter items
-7. If customer asks for "main course" - return main dish items
+2. NO explanations, NO prices, ONLY names in quotes
+3. If customer asks for "vegetarian" or "veg" - return ONLY items marked [Vegetarian]
+4. If customer asks for "non-veg" - return ONLY items marked [Non-Vegetarian]
+5. If customer asks for "starters" - return appetizer/starter items
+6. If customer asks for "main course" - return main dish items
+7. If customer mentions NUMBER OF PEOPLE (e.g. "2 people", "family of 4"):
+   - Suggest a good MIX: 1-2 starters + 2-3 mains + 1 dessert/drink
+   - More people = more variety of items
+8. If customer asks for "combo" or "meal" - suggest starter + main + dessert
+9. Look at serving size info if available to make better suggestions
 
-EXAMPLE:
+EXAMPLES:
 Customer: "show me veg dishes"
-Response: "Veg Thali", "Paneer Tikka", "Dal Makhani", "Bhendi"
+Response: "Veg Thali", "Paneer Tikka", "Dal Makhani"
 
-Customer: "what starters do you have"
-Response: "Tandoori Phool", "Paneer Tikka", "Chicken Wings"`;
+Customer: "we are 2 people"
+Response: "Tandoori Phool", "Dal Makhani", "Murgh Pasanda", "Gulab Jamun"
+
+Customer: "dinner for 4 people"
+Response: "Saufiyani Paneer Tikka", "Methi Macchhi Tikka", "Dum Biryani", "Veg Thali", "Non Veg Thali", "Gulab Jamun"`;
 
       setSystemPrompt(prompt);
 
@@ -254,9 +261,29 @@ Return the exact item names from the menu that match this request. Format: "Item
       const foundItems = findMenuItems(store?.menu || {}, itemNames);
 
       if (foundItems.length > 0) {
+        // Generate a friendly intro based on item count
+        let intros;
+        if (foundItems.length >= 4) {
+          intros = [
+            "Here's a great spread for you:",
+            "This should be perfect:",
+            "A delicious combo:",
+            "This will hit the spot:",
+          ];
+        } else {
+          intros = [
+            "You'll love these!",
+            "Great choice! Try these:",
+            "Yum! How about:",
+            "These are popular picks:",
+            "Good taste! Check these out:",
+          ];
+        }
+        const intro = intros[Math.floor(Math.random() * intros.length)];
+
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", type: "items", items: foundItems },
+          { role: "assistant", type: "items", items: foundItems, intro: intro },
         ]);
       } else {
         // Fallback to text if no items found
@@ -349,14 +376,17 @@ Return the exact item names from the menu that match this request. Format: "Item
               className={`chat-message ${msg.role === "user" ? "user-message" : "assistant-message"}`}
             >
               {msg.type === "items" ? (
-                <div className="chat-items-grid">
-                  {msg.items.map((item, idx) => (
-                    <ChatMenuItem
-                      key={idx}
-                      item={item}
-                      storeDetails={store}
-                    />
-                  ))}
+                <div className="chat-items-response">
+                  {msg.intro && <div className="chat-items-intro">{msg.intro}</div>}
+                  <div className="chat-items-grid">
+                    {msg.items.map((item, idx) => (
+                      <ChatMenuItem
+                        key={idx}
+                        item={item}
+                        storeDetails={store}
+                      />
+                    ))}
+                  </div>
                 </div>
               ) : (
                 <div className="message-content">{msg.content}</div>
