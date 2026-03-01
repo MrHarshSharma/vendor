@@ -11,21 +11,21 @@ const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
  * Format menu data into readable string for AI context
  */
 function formatMenuForAI(menu, currencySymbol = "₹") {
-  let formatted = "";
+  const lines = [];
   for (const [category, items] of Object.entries(menu)) {
-    formatted += `\n## ${category}\n`;
-    items.forEach((item) => {
-      formatted += `- "${item.name}" (${currencySymbol}${item.price})`;
+    lines.push(`\n## ${category}`);
+    for (const item of items) {
+      let line = `- "${item.name}" (${currencySymbol}${item.price})`;
       if (item.veg_nonveg) {
         const isVeg = typeof item.veg_nonveg === 'string'
           ? item.veg_nonveg.toLowerCase() === 'veg'
           : item.veg_nonveg === true;
-        formatted += ` [${isVeg ? 'Vegetarian' : 'Non-Vegetarian'}]`;
+        line += ` [${isVeg ? 'Vegetarian' : 'Non-Vegetarian'}]`;
       }
-      formatted += "\n";
-    });
+      lines.push(line);
+    }
   }
-  return formatted;
+  return lines.join("\n");
 }
 
 /**
@@ -38,7 +38,7 @@ function findMenuItems(menu, itemNames) {
   for (const searchName of itemNames) {
     const searchLower = searchName.toLowerCase().trim();
 
-    for (const [category, items] of Object.entries(menu)) {
+    for (const items of Object.values(menu)) {
       for (const item of items) {
         const itemNameLower = item.name.toLowerCase().trim();
 
