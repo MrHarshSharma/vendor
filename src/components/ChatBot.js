@@ -90,7 +90,7 @@ async function callGeminiAPI(prompt, history = []) {
     body: JSON.stringify({
       contents,
       generationConfig: {
-        maxOutputTokens: 256,
+        maxOutputTokens: 500,
         temperature: 0.3,
       },
     }),

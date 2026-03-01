@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cherish Chow - Pricing Comparison</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background: #ffffff;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    .page {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 60px 50px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 40px;
+      border-bottom: 3px solid #D97706;
+      margin-bottom: 50px;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      color: #D97706;
+      letter-spacing: -0.5px;
+    }
+
+    .header-subtitle {
+      font-size: 14px;
+      color: #666;
+      text-align: right;
+    }
+
+    /* Section Styling */
+    .section {
+      margin-bottom: 45px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #D97706;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    /* Main Headline */
+    .headline {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .headline h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 15px;
+      line-height: 1.3;
+    }
+
+    .headline p {
+      font-size: 18px;
+      color: #666;
+    }
+
+    /* Comparison Cards */
+    .comparison-cards {
+      display: flex;
+      gap: 30px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      flex: 1;
+      padding: 30px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .card.competitor {
+      background: #f8f8f8;
+      border: 1px solid #e0e0e0;
+    }
+
+    .card.cherish {
+      background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+      border: 2px solid #D97706;
+    }
+
+    .card-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #888;
+      margin-bottom: 15px;
+    }
+
+    .card.cherish .card-label {
+      color: #92400E;
+    }
+
+    .card-fee {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .card-amount {
+      font-size: 36px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 15px;
+    }
+
+    .card.cherish .card-amount {
+      color: #D97706;
+    }
+
+    .card-commission {
+      font-size: 16px;
+      padding: 10px 15px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .card.competitor .card-commission {
+      background: #FEE2E2;
+      color: #DC2626;
+    }
+
+    .card.cherish .card-commission {
+      background: #D1FAE5;
+      color: #059669;
+    }
+
+    /* Table Styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+
+    th,
+    td {
+      padding: 16px 20px;
+      text-align: left;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    th {
+      background: #f8f8f8;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #666;
+    }
+
+    td {
+      font-size: 15px;
+    }
+
+    th:not(:first-child),
+    td:not(:first-child) {
+      text-align: center;
+    }
+
+    .row-highlight {
+      background: #FFFBEB;
+      font-weight: 600;
+    }
+
+    .row-highlight td {
+      border-bottom: 2px solid #D97706;
+    }
+
+    .negative {
+      color: #DC2626;
+    }
+
+    .positive {
+      color: #059669;
+    }
+
+    /* Growth Comparison */
+    .growth-box {
+      background: #f8f8f8;
+      border-radius: 8px;
+      padding: 30px;
+      margin: 30px 0;
+    }
+
+    .growth-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1a1a1a;
+    }
+
+    .growth-comparison {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .growth-item {
+      text-align: center;
+    }
+
+    .growth-label {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .growth-value {
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .growth-value.negative {
+      color: #DC2626;
+    }
+
+    .growth-value.positive {
+      color: #059669;
+    }
+
+    .growth-arrow {
+      font-size: 24px;
+      color: #ccc;
+    }
+
+    .savings-badge {
+      background: #D1FAE5;
+      color: #059669;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 10px;
+      display: inline-block;
+    }
+
+    /* Key Differences */
+    .differences {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .diff-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      padding: 20px;
+      background: #f8f8f8;
+      border-radius: 8px;
+    }
+
+    .diff-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .diff-icon.positive {
+      background: #D1FAE5;
+    }
+
+    .diff-content h4 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #1a1a1a;
+    }
+
+    .diff-content p {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    /* CTA Box */
+    .cta-box {
+      background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+      color: white;
+      padding: 40px;
+      border-radius: 8px;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    .cta-box h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .cta-box p {
+      font-size: 16px;
+      color: #ccc;
+      margin-bottom: 25px;
+    }
+
+    .cta-box .highlight {
+      color: #FDD874;
+    }
+
+    .cta-contact {
+      display: inline-block;
+      background: #D97706;
+      color: white;
+      padding: 15px 40px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 50px;
+      padding-top: 30px;
+      border-top: 1px solid #e5e5e5;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: #888;
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .page {
+        padding: 40px;
+      }
+
+      .cta-box {
+        background: #1a1a1a !important;
+        -webkit-print-color-adjust: exact !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">Cherish Chow</div>
+      <div class="header-subtitle">
+        Smart Restaurant Ordering<br>
+        Pricing Comparison
+      </div>
+    </div>
+
+    <!-- Headline -->
+    <div class="headline">
+      <h1>Stop Paying Commission on Every Order</h1>
+      <p>See how much you're really paying with transaction-based pricing</p>
+    </div>
+
+    <!-- Pricing Comparison Cards -->
+    <div class="section">
+      <div class="section-title">Pricing Structure</div>
+
+      <div class="comparison-cards">
+        <div class="card competitor">
+          <div class="card-label">Competitor</div>
+          <div class="card-fee" style="text-decoration: line-through; color: #999;">They say ₹833/month</div>
+          <div style="font-size: 14px; color: #666; margin: 10px 0;">But you actually pay:</div>
+          <div class="card-amount" style="color: #DC2626;">₹55k + ₹24k/mo </div>
+
+          <div style="background: #FEE2E2; border-radius: 6px; padding: 15px; margin-top: 15px; text-align: left;">
+            <div
+              style="font-size: 11px; font-weight: 600; color: #DC2626; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">
+              One-Time Payment</div>
+            <div style="font-size: 13px; color: #666; line-height: 1.8;">
+              <div style="display: flex; justify-content: space-between;">
+                <span>POS Terminal</span>
+                <span style="color: #DC2626;">₹25,000</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span>Printers (Bill + KOT)</span>
+                <span style="color: #DC2626;">₹18,000</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span>Setup & Training</span>
+                <span style="color: #DC2626;">₹12,000</span>
+              </div>
+              <div
+                style="display: flex; justify-content: space-between; border-top: 1px solid #FECACA; padding-top: 8px; margin-top: 8px;">
+                <span style="font-weight: 600;">Total Upfront</span>
+                <span style="color: #DC2626; font-weight: 700;">₹55,000</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="background: #FEE2E2; border-radius: 6px; padding: 15px; margin-top: 10px; text-align: left;">
+            <div
+              style="font-size: 11px; font-weight: 600; color: #DC2626; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">
+              Every Month</div>
+            <div style="font-size: 13px; color: #666; line-height: 1.8;">
+              <div style="display: flex; justify-content: space-between;">
+                <span>Subscription</span>
+                <span style="color: #DC2626;">₹833</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span>Transaction fee (2%)</span>
+                <span style="color: #DC2626;">₹20,000</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card cherish">
+          <div class="card-label">Cherish Chow</div>
+          <div class="card-fee">You pay exactly:</div>
+          <div class="card-amount">₹20k/mo</div>
+          <div class="card-commission">Zero Commission</div>
+
+          <div style="background: #D1FAE5; border-radius: 6px; padding: 15px; margin-top: 15px; text-align: left;">
+            <div
+              style="font-size: 11px; font-weight: 600; color: #059669; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">
+              One-Time Payment</div>
+            <div style="font-size: 13px; color: #666; line-height: 1.8;">
+              <div style="display: flex; justify-content: space-between;">
+                <span>POS Terminal</span>
+                <span style="color: #059669; font-weight: 600;">₹0</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span>Printers</span>
+                <span style="color: #059669; font-weight: 600;">₹0</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span>Setup & Training</span>
+                <span style="color: #059669; font-weight: 600;">₹0</span>
+              </div>
+              <div
+                style="display: flex; justify-content: space-between; border-top: 1px solid #A7F3D0; padding-top: 8px; margin-top: 8px;">
+                <span style="font-weight: 600;">Total Upfront</span>
+                <span style="color: #059669; font-weight: 700;">₹0</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="background: #D1FAE5; border-radius: 6px; padding: 15px; margin-top: 10px; text-align: left;">
+            <div
+              style="font-size: 11px; font-weight: 600; color: #059669; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">
+              Every Month</div>
+            <div style="font-size: 13px; color: #666; line-height: 1.8;">
+              <div style="display: flex; justify-content: space-between;">
+                <span>Subscription</span>
+                <span style="color: #059669; font-weight: 600;">₹20,000</span>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span>Transaction fee</span>
+                <span style="color: #059669; font-weight: 600;">₹0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- True Cost Table -->
+    <div class="section">
+      <div class="section-title">True Monthly Cost Comparison</div>
+      <p style="color: #666; margin-bottom: 15px;">Based on ₹10,00,000 monthly revenue</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Cost Component</th>
+            <th>Competitor</th>
+            <th>Cherish Chow</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Monthly Subscription</td>
+            <td>₹833</td>
+            <td>₹20,000</td>
+          </tr>
+          <tr>
+            <td>Transaction Fee (2% of revenue)</td>
+            <td class="negative">₹20,000</td>
+            <td class="positive">₹0</td>
+          </tr>
+          <tr>
+            <td>Hardware (POS, Printer, KOT)*</td>
+            <td class="negative">₹2,500</td>
+            <td class="positive">₹0</td>
+          </tr>
+          <tr>
+            <td>Training & Setup*</td>
+            <td class="negative">₹1,000</td>
+            <td class="positive">₹0</td>
+          </tr>
+          <tr class="row-highlight">
+            <td><strong>Total Monthly Cost</strong></td>
+            <td class="negative"><strong>₹24,333</strong></td>
+            <td class="positive"><strong>₹20,000</strong></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="color: #999; font-size: 12px; margin-top: 15px;">*Hardware ₹30,000 + Training ₹12,000 amortized over 12
+        months</p>
+    </div>
+
+    <!-- Growth Scenario -->
+    <div class="section">
+      <div class="section-title">As Your Business Grows</div>
+
+      <div class="growth-box">
+        <div class="growth-title">At ₹15,00,000 monthly revenue, you pay:</div>
+        <div class="growth-comparison">
+          <div class="growth-item">
+            <div class="growth-label">Competitor Total</div>
+            <div class="growth-value negative">₹34,333</div>
+          </div>
+          <div class="growth-arrow">→</div>
+          <div class="growth-item">
+            <div class="growth-label">Cherish Chow Total</div>
+            <div class="growth-value positive">₹20,000</div>
+            <div class="savings-badge">Save ₹14,333/month</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hidden Costs Breakdown -->
+    <div class="section" style="page-break-before: always;">
+      <div class="section-title">Competitor's Hidden Costs Exposed</div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+
+        <!-- One-Time Costs -->
+        <div style="background: #FEF2F2; border-radius: 8px; padding: 25px; border-left: 4px solid #DC2626;">
+          <h3 style="font-size: 16px; font-weight: 600; color: #DC2626; margin-bottom: 15px;">One-Time Costs</h3>
+          <table style="margin: 0;">
+            <tr>
+              <td style="padding: 8px 0; border: none; font-size: 14px;">POS Terminal</td>
+              <td style="padding: 8px 0; border: none; text-align: right; font-size: 14px;">₹15,000 - 40,000</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; border: none; font-size: 14px;">Billing Printer</td>
+              <td style="padding: 8px 0; border: none; text-align: right; font-size: 14px;">₹8,000 - 15,000</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; border: none; font-size: 14px;">KOT Printer (Kitchen)</td>
+              <td style="padding: 8px 0; border: none; text-align: right; font-size: 14px;">₹8,000 - 12,000</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; border: none; font-size: 14px;">Cash Drawer</td>
+              <td style="padding: 8px 0; border: none; text-align: right; font-size: 14px;">₹3,000 - 5,000</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; border: none; font-size: 14px;">Setup & Installation</td>
+              <td style="padding: 8px 0; border: none; text-align: right; font-size: 14px;">₹5,000 - 10,000</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; border: none; font-size: 14px;">Staff Training</td>
+              <td style="padding: 8px 0; border: none; text-align: right; font-size: 14px;">₹5,000 - 12,000</td>
+            </tr>
+            <tr style="border-top: 2px solid #DC2626;">
+              <td style="padding: 12px 0 0 0; border: none; font-size: 14px; font-weight: 700;">Total Upfront</td>
+              <td
+                style="padding: 12px 0 0 0; border: none; text-align: right; font-size: 14px; font-weight: 700; color: #DC2626;">
+                ₹44,000 - 94,000</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Monthly Recurring Costs -->
+        <div style="background: #FEF2F2; border-radius: 8px; padding: 25px; border-left: 4px solid #DC2626;">
+          <h3 style="font-size: 16px; font-weight: 600; color: #DC2626; margin-bottom: 15px;">Monthly Recurring Costs
+          </h3>
+          <table style="margin: 0;">
+            <tr>
+              <td style="padding: 8px 0; border: none; font-size: 14px;">Base Subscription</td>
+              <td style="padding: 8px 0; border: none; text-align: right; font-size: 14px;">₹833</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; border: none; font-size: 14px;">Transaction Fee (2%)</td>
+              <td style="padding: 8px 0; border: none; text-align: right; font-size: 14px;">₹10,000 - 40,000</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; border: none; font-size: 14px;">Payment Gateway Fee</td>
+              <td style="padding: 8px 0; border: none; text-align: right; font-size: 14px;">1.5% - 2%</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; border: none; font-size: 14px;">SMS/WhatsApp Alerts</td>
+              <td style="padding: 8px 0; border: none; text-align: right; font-size: 14px;">₹500 - 2,000</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; border: none; font-size: 14px;">Additional Outlet</td>
+              <td style="padding: 8px 0; border: none; text-align: right; font-size: 14px;">₹500 - 1,000 each</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; border: none; font-size: 14px;">Priority Support</td>
+              <td style="padding: 8px 0; border: none; text-align: right; font-size: 14px;">₹1,000 - 2,000</td>
+            </tr>
+            <tr style="border-top: 2px solid #DC2626;">
+              <td style="padding: 12px 0 0 0; border: none; font-size: 14px; font-weight: 700;">Monthly Total</td>
+              <td
+                style="padding: 12px 0 0 0; border: none; text-align: right; font-size: 14px; font-weight: 700; color: #DC2626;">
+                ₹15,000 - 50,000+</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- Annual Cost Comparison -->
+      <div style="margin-top: 30px; background: #f8f8f8; border-radius: 8px; padding: 25px;">
+        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Annual Cost Comparison (₹10L/month revenue)
+        </h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+          <div style="text-align: center; padding: 20px; background: #FEE2E2; border-radius: 8px;">
+            <div style="font-size: 13px; color: #666; margin-bottom: 10px;">Competitor - Year 1</div>
+            <div style="font-size: 28px; font-weight: 700; color: #DC2626;">₹3,62,000</div>
+            <div style="font-size: 12px; color: #666; margin-top: 8px;">₹70,000 setup + ₹24,333 × 12</div>
+          </div>
+          <div style="text-align: center; padding: 20px; background: #D1FAE5; border-radius: 8px;">
+            <div style="font-size: 13px; color: #666; margin-bottom: 10px;">Cherish Chow - Year 1</div>
+            <div style="font-size: 28px; font-weight: 700; color: #059669;">₹2,40,000</div>
+            <div style="font-size: 12px; color: #666; margin-top: 8px;">₹20,000 × 12 (No hidden costs)</div>
+          </div>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+          <span
+            style="background: #D1FAE5; color: #059669; padding: 10px 20px; border-radius: 20px; font-weight: 600; font-size: 16px;">
+            Save ₹1,22,000 in Year 1
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Differences -->
+    <div class="section">
+      <div class="section-title">Why Restaurant Owners Choose Cherish Chow</div>
+
+      <div class="differences">
+        <div class="diff-item">
+          <div class="diff-icon positive">📈</div>
+          <div class="diff-content">
+            <h4>Your Growth, Your Profit</h4>
+            <p>When your revenue increases, your costs stay the same. No percentage taken from your success.</p>
+          </div>
+        </div>
+        <div class="diff-item">
+          <div class="diff-icon positive">🤖</div>
+          <div class="diff-content">
+            <h4>AI-Powered Ordering</h4>
+            <p>Smart menu assistant helps customers decide what to order, increasing average order value by 10-15%.</p>
+          </div>
+        </div>
+        <div class="diff-item">
+          <div class="diff-icon positive">💰</div>
+          <div class="diff-content">
+            <h4>Predictable Costs</h4>
+            <p>Fixed monthly fee makes budgeting simple. No surprises at the end of the month.</p>
+          </div>
+        </div>
+        <div class="diff-item">
+          <div class="diff-icon positive">📱</div>
+          <div class="diff-content">
+            <h4>No Hardware Required</h4>
+            <p>Works on any smartphone or tablet. No expensive POS machines to purchase or maintain.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-box">
+      <h2>The More You Earn, <span class="highlight">The More You Keep</span></h2>
+      <p>Join restaurants that chose transparent, commission-free pricing</p>
+      <a href="https://cherishchow.com" target="_blank" class="cta-contact">Schedule a Demo</a>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div>© 2024 Cherish Chow</div>
+      <div>www.cherishchow.com</div>
+    </div>
+
+  </div>
+</body>
+
+</html>
