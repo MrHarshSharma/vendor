@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Drawer, Input, Spin } from "antd";
-import { MessageOutlined, SendOutlined, CloseOutlined } from "@ant-design/icons";
+import { SendOutlined, CloseOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import ChatMenuItem from "./ChatMenuItem";
 
