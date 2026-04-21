@@ -38,8 +38,8 @@ const ChatMenuItem = ({ item, storeDetails }) => {
       </div>
 
       {quantity === 0 ? (
-        <button className="chat-add-btn" onClick={handleAdd}>
-          <PlusOutlined />
+        <button className="chat-add-btn-text" onClick={handleAdd}>
+          ADD
         </button>
       ) : (
         <div className="chat-qty-control">
@@ -48,14 +48,14 @@ const ChatMenuItem = ({ item, storeDetails }) => {
             onClick={handleDecrementOrRemove}
           >
             {quantity === 1 ? (
-              <DeleteOutlined style={{ fontSize: "12px" }} />
+              <DeleteOutlined style={{ fontSize: "10px" }} />
             ) : (
-              <MinusOutlined style={{ fontSize: "12px" }} />
+              <MinusOutlined style={{ fontSize: "10px" }} />
             )}
           </button>
           <span className="chat-qty-value">{quantity}</span>
           <button className="chat-qty-btn" onClick={handleIncrement}>
-            <PlusOutlined style={{ fontSize: "12px" }} />
+            <PlusOutlined style={{ fontSize: "10px" }} />
           </button>
         </div>
       )}

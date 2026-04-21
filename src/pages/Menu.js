@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import AppLayout from "./AppLayout";
 import {
-  DownOutlined,
   MinusOutlined, PlusOutlined, ShoppingOutlined, DeleteOutlined,
-  HistoryOutlined
+  HistoryOutlined, MessageOutlined
 } from "@ant-design/icons";
-import { Dropdown, Drawer, Switch, Button, message } from "antd";
+import { Drawer, Switch, Button, message, Skeleton } from "antd";
 import { db, auth, provider } from "../firebase/setup";
 import {
   doc,
@@ -42,6 +41,8 @@ function Menu() {
   // Drawer State & Cart State
   const [cartDrawerVisible, setCartDrawerVisible] = useState(false);
   const [orderLoading, setOrderLoading] = useState(false);
+  const [hasExistingOrder, setHasExistingOrder] = useState(false);
+  const [chatVisible, setChatVisible] = useState(false);
   const [user, setUser] = useState(() => {
     const stored = localStorage.getItem("user");
     return stored ? JSON.parse(stored) : null;
@@ -78,6 +79,26 @@ function Menu() {
     fetchConfigstore();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Check for existing active order
+  useEffect(() => {
+    const checkExistingOrder = async () => {
+      if (!user || !cartDrawerVisible) return;
+      try {
+        const ordersRef = collection(db, "orders");
+        let q = query(ordersRef, where("storeId", "==", storeId), where("table", "==", Number(table)), where("customer.uid", "==", user.uid), where("orderStatus", "==", "accept"));
+        let snap = await getDocs(q);
+        if (snap.empty) {
+          q = query(ordersRef, where("storeId", "==", storeId), where("table", "==", Number(table)), where("customer.uid", "==", user.uid), where("orderStatus", "==", "new"));
+          snap = await getDocs(q);
+        }
+        setHasExistingOrder(!snap.empty);
+      } catch {
+        setHasExistingOrder(false);
+      }
+    };
+    checkExistingOrder();
+  }, [cartDrawerVisible, user, storeId, table]);
 
   // Place order function
   const placeOrder = async (currentUser) => {
@@ -224,16 +245,6 @@ function Menu() {
 
 
 
-  // Prepare Dropdown Items
-  const categoryItems = storeDetails?.menu ? Object.keys(storeDetails.menu).map(cat => ({
-    key: cat,
-    label: (
-      <span onClick={() => scrollToSection(cat)} style={{ textTransform: 'capitalize', fontSize: '16px', padding: '10px 20px', display: 'block' }}>
-        {cat}
-      </span>
-    )
-  })) : [];
-
   // Calculate Total (Price * Quantity)
   const cartTotal = cart.reduce((acc, item) => acc + (parseFloat(item.price) * item.quantity), 0);
   const cartTotalCount = cart.reduce((acc, item) => acc + item.quantity, 0);
@@ -241,65 +252,87 @@ function Menu() {
   return (
     <AppLayout>
       <div className="profile-container">
-        {/* Header */}
-        <div className="menu-header">
-
-          {/* Left Side: Title */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Switch
-                  checked={showVeg}
-                  onChange={setShowVeg}
-                  size="small"
-                  style={{ backgroundColor: showVeg ? '#22c55e' : undefined }}
-                />
-                <span style={{ color: 'white', fontSize: '14px' }}>Veg Only</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Switch
-                  checked={showNonVeg}
-                  onChange={setShowNonVeg}
-                  size="small"
-                  style={{ backgroundColor: showNonVeg ? '#ef4444' : undefined }}
-                />
-                <span style={{ color: 'white', fontSize: '14px' }}>Non-Veg</span>
+        {/* Sticky Top Section */}
+        <div className="sticky-top">
+          {/* Header */}
+          <div className="menu-header">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {storeDetails?.restaurantName && (
+                <span style={{ fontSize: '17px', fontWeight: '700', color: '#1A1A1A', letterSpacing: '-0.3px' }}>
+                  {storeDetails.restaurantName}
+                </span>
+              )}
+              <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Switch
+                    checked={showVeg}
+                    onChange={setShowVeg}
+                    size="small"
+                    style={{ backgroundColor: showVeg ? '#16A34A' : undefined }}
+                  />
+                  <span style={{ color: '#1A1A1A', fontSize: '13px', fontWeight: '500' }}>Veg Only</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Switch
+                    checked={showNonVeg}
+                    onChange={setShowNonVeg}
+                    size="small"
+                    style={{ backgroundColor: showNonVeg ? '#DC2626' : undefined }}
+                  />
+                  <span style={{ color: '#1A1A1A', fontSize: '13px', fontWeight: '500' }}>Non-Veg</span>
+                </div>
               </div>
             </div>
-            {storeDetails && (
-              <Dropdown menu={{ items: categoryItems }} trigger={['click']} overlayStyle={{ minWidth: '150px' }}>
-                <div style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', color: '#9CA3AF', fontSize: '14px' }}>
-                  <span style={{ textTransform: 'capitalize' }}>{activeCategory}</span>
-                  <DownOutlined style={{ fontSize: '10px' }} />
-                </div>
-              </Dropdown>
-            )}
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <button className="icon-btn" onClick={() => navigate(`/orders/${storeId}/${table}`)} title="Order History">
+                <HistoryOutlined style={{ fontSize: '22px' }} />
+              </button>
+              {cartTotalCount > 0 && (
+                <button className="icon-btn" onClick={() => setCartDrawerVisible(true)}>
+                  <ShoppingOutlined style={{ fontSize: '22px' }} />
+                  <span className="cart-badge">{cartTotalCount}</span>
+                </button>
+              )}
+            </div>
           </div>
 
-          {/* Right Side: Actions (Orders + Cart) */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <button className="icon-btn" onClick={() => navigate(`/orders/${storeId}/${table}`)} title="Order History">
-              <HistoryOutlined style={{ fontSize: '22px' }} />
-            </button>
-            {cartTotalCount > 0 && (
-              <button className="icon-btn" onClick={() => setCartDrawerVisible(true)}>
-                <ShoppingOutlined style={{ fontSize: '22px' }} />
-                <span className="cart-badge">{cartTotalCount}</span>
-              </button>
-            )}
-          </div>
+          {/* AI Search Bar */}
+          {storeDetails && (
+            <div className="ai-search-bar" onClick={() => setChatVisible(true)}>
+              <MessageOutlined className="ai-search-icon" />
+              <span className="ai-search-text">What are you craving today?</span>
+              <span className="ai-search-badge">AI</span>
+            </div>
+          )}
+
+          {/* Horizontal Category Tabs */}
+          {storeDetails?.menu && (
+            <div className="category-tabs">
+              {Object.keys(storeDetails.menu).map((cat) => (
+                <button
+                  key={cat}
+                  className={`category-tab ${activeCategory === cat ? 'active' : ''}`}
+                  onClick={() => scrollToSection(cat)}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
 
         {storeDetails !== null ? (
           <div className="menu-container">
             {/* Grid Content */}
-            {storeDetails.menu &&
-              Object.keys(storeDetails.menu).map((category) => {
+            {storeDetails.menu && (() => {
+              const categories = Object.keys(storeDetails.menu);
+              let totalVisible = 0;
+
+              const rendered = categories.map((category) => {
                 const menuItem = storeDetails.menu[category];
-                // Filter items first
                 const filteredItems = menuItem.filter(item => {
-                  // Check for Veg status
                   const isVeg = (typeof item.veg_nonveg === 'string' ? item.veg_nonveg.toLowerCase() === 'veg' : item.veg_nonveg === true)
                     || item.isVeg
                     || item.veg
@@ -310,39 +343,81 @@ function Menu() {
                   return showNonVeg;
                 });
 
-                // Only render if there are items to show
-                return (
-                  filteredItems.length > 0 && (
-                    <div className="menu-category" key={category} id={category}>
-                      {/* Category Title */}
-                      <h3 style={{
-                        color: 'white',
-                        fontSize: '22px',
-                        fontWeight: '700',
-                        padding: '24px 8px 8px 8px',
-                        margin: 0,
-                        textTransform: 'capitalize'
-                      }}>
-                        {category}
-                      </h3>
+                totalVisible += filteredItems.length;
 
-                      <div className="menu-items">
-                        {filteredItems.map((item) => (
-                          <MenuItem
-                            key={item.name}
-                            item={item}
-                            inCart={false}
-                            storeDetails={storeDetails}
-                          />
-                        ))}
-                      </div>
+                return filteredItems.length > 0 ? (
+                  <div className="menu-category" key={category} id={category}>
+                    <h3 style={{
+                      color: '#1A1A1A',
+                      fontSize: '18px',
+                      fontWeight: '700',
+                      padding: '20px 4px 6px 4px',
+                      margin: 0,
+                      textTransform: 'capitalize',
+                      letterSpacing: '-0.3px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}>
+                      {category}
+                      <span style={{ fontSize: '13px', fontWeight: '500', color: '#A1A1AA' }}>
+                        ({filteredItems.length})
+                      </span>
+                    </h3>
+
+                    <div className="menu-items">
+                      {filteredItems.map((item) => (
+                        <MenuItem
+                          key={item.name}
+                          item={item}
+                          inCart={false}
+                          storeDetails={storeDetails}
+                        />
+                      ))}
                     </div>
-                  )
+                  </div>
+                ) : null;
+              });
+
+              if (totalVisible === 0) {
+                return (
+                  <div className="filter-empty-state">
+                    <span style={{ fontSize: '36px' }}>🍽️</span>
+                    <div style={{ fontSize: '16px', fontWeight: '600', color: '#1A1A1A', marginTop: '12px' }}>
+                      No items found
+                    </div>
+                    <div style={{ fontSize: '13px', color: '#71717A', marginTop: '4px' }}>
+                      Try adjusting your Veg / Non-Veg filters
+                    </div>
+                  </div>
                 );
-              })}
+              }
+
+              return rendered;
+            })()}
           </div>
         ) : (
-          <div style={{ padding: "20px", textAlign: "center", color: "white" }}>Loading...</div>
+          <div className="menu-container">
+            <div style={{ padding: '20px 4px 6px 4px' }}>
+              <Skeleton.Button active size="small" style={{ width: 100, height: 22, borderRadius: 6 }} />
+            </div>
+            <div className="menu-items">
+              {[1, 2, 3, 4].map((i) => (
+                <div className="item-menu" key={i} style={{ overflow: 'hidden' }}>
+                  <div style={{ width: 110, minHeight: 110, flexShrink: 0, background: '#EEEDEA' }} />
+                  <div className="card-content" style={{ gap: 8 }}>
+                    <Skeleton.Button active size="small" style={{ width: '70%', height: 16, borderRadius: 4 }} />
+                    <Skeleton.Button active size="small" style={{ width: '90%', height: 12, borderRadius: 4 }} />
+                    <div style={{ display: 'flex', gap: 10 }}>
+                      <Skeleton.Button active size="small" style={{ width: 50, height: 12, borderRadius: 4 }} />
+                      <Skeleton.Button active size="small" style={{ width: 60, height: 12, borderRadius: 4 }} />
+                    </div>
+                    <Skeleton.Button active size="small" style={{ width: 60, height: 18, borderRadius: 4 }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
 
@@ -356,15 +431,15 @@ function Menu() {
           height="85vh" // Taller drawer for cart
           className="cart-drawer"
           styles={{
-            content: { backgroundColor: '#2B3041', color: 'white', borderTopLeftRadius: '24px', borderTopRightRadius: '24px' },
-            body: { backgroundColor: '#2B3041', color: 'white' }
+            content: { backgroundColor: '#FFFFFF', color: '#1A1A1A', borderTopLeftRadius: '20px', borderTopRightRadius: '20px' },
+            body: { backgroundColor: '#FFFFFF', color: '#1A1A1A' }
           }}
           maskStyle={{ backdropFilter: 'blur(3px)' }}
         >
           <div className="cart-header">
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span className="cart-title">Your Requests</span>
-              <span style={{ color: '#9CA3AF', fontSize: '14px' }}>{cartTotalCount} items</span>
+              <span style={{ color: '#71717A', fontSize: '13px' }}>{cartTotalCount} items</span>
             </div>
             <button className="clear-btn" onClick={() => {
               dispatch(clearCart());
@@ -378,7 +453,7 @@ function Menu() {
                 {item.imageUrl ? (
                   <img src={item.imageUrl} alt={item.name} className="cart-thumb" />
                 ) : (
-                  <div className="cart-thumb" style={{ background: '#4B5563', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="cart-thumb" style={{ background: '#EEEDEA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <span style={{ fontSize: '20px' }}>🥘</span>
                   </div>
                 )}
@@ -429,26 +504,38 @@ function Menu() {
                 className="add-cart-btn-large"
                 style={{
                   width: '100%',
-                  height: '56px',
-                  backgroundColor: '#F59E0B',
+                  height: '52px',
+                  backgroundColor: '#1A1A1A',
                   border: 'none',
                   borderRadius: '12px',
-                  color: '#1E2433',
-                  fontSize: '18px',
-                  fontWeight: '700',
+                  color: '#FFFFFF',
+                  fontSize: '16px',
+                  fontWeight: '600',
                   cursor: 'pointer',
                   opacity: orderLoading ? 0.7 : 1,
+                  letterSpacing: '-0.1px',
                 }}
               >
-                Place Order
+                {hasExistingOrder ? 'Add to Order' : 'Place Order'}
               </Button>
             )}
           </div>
         </Drawer>
 
+        {/* Sticky Cart Bar */}
+        {cartTotalCount > 0 && (
+          <div className="sticky-cart-bar" onClick={() => setCartDrawerVisible(true)}>
+            <div className="sticky-cart-info">
+              <span className="sticky-cart-count">{cartTotalCount} {cartTotalCount === 1 ? 'item' : 'items'}</span>
+              <span className="sticky-cart-total">{storeDetails?.currencySymbol || "₹"}{cartTotal.toFixed(2)}</span>
+            </div>
+            <span className="sticky-cart-cta">View Cart →</span>
+          </div>
+        )}
+
         {/* AI Menu Assistant ChatBot */}
         {storeDetails && (
-          <ChatBot storeDetails={storeDetails} storeId={storeId} />
+          <ChatBot storeDetails={storeDetails} storeId={storeId} visible={chatVisible} onClose={() => setChatVisible(false)} />
         )}
       </div >
     </AppLayout >

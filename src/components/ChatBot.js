@@ -149,8 +149,9 @@ function parseItemNames(response) {
   return names;
 }
 
-const ChatBot = ({ storeDetails, storeId }) => {
-  const [drawerVisible, setDrawerVisible] = useState(false);
+const ChatBot = ({ storeDetails, storeId, visible, onClose }) => {
+  const drawerVisible = visible;
+  const setDrawerVisible = (val) => { if (!val && onClose) onClose(); };
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [systemPrompt, setSystemPrompt] = useState("");
@@ -320,15 +321,6 @@ Return the exact item names from the menu that match this request. Format: "Item
 
   return (
     <>
-      {/* Floating Chat Button */}
-      <button
-        className="chat-fab"
-        onClick={() => setDrawerVisible(true)}
-        aria-label="Open menu assistant"
-      >
-        <MessageOutlined style={{ fontSize: "24px" }} />
-      </button>
-
       {/* Chat Drawer */}
       <Drawer
         placement="bottom"
@@ -339,14 +331,14 @@ Return the exact item names from the menu that match this request. Format: "Item
         className="chat-drawer"
         styles={{
           content: {
-            backgroundColor: "#2B3041",
-            color: "white",
-            borderTopLeftRadius: "24px",
-            borderTopRightRadius: "24px",
+            backgroundColor: "#FFFFFF",
+            color: "#1A1A1A",
+            borderTopLeftRadius: "20px",
+            borderTopRightRadius: "20px",
           },
           body: {
-            backgroundColor: "#2B3041",
-            color: "white",
+            backgroundColor: "#FFFFFF",
+            color: "#1A1A1A",
             padding: "0",
             display: "flex",
             flexDirection: "column",
@@ -446,7 +438,7 @@ Return the exact item names from the menu that match this request. Format: "Item
                 <SendOutlined
                   style={{
                     fontSize: "18px",
-                    color: inputValue.trim() && !loading ? "#FDD874" : "#6B7280",
+                    color: inputValue.trim() && !loading ? "#1A1A1A" : "#A1A1AA",
                   }}
                 />
               </button>

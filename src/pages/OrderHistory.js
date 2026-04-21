@@ -206,19 +206,19 @@ const OrderHistory = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case "new":
-        return "#F59E0B"; // Amber/Yellow
+        return "#D97706"; // Amber
       case "accept":
       case "accepted":
-        return "#8B5CF6"; // Purple
+        return "#7C3AED"; // Purple
       case "preparing":
-        return "#F97316"; // Orange
+        return "#EA580C"; // Orange
       case "complete":
       case "completed":
-        return "#22C55E"; // Green
+        return "#16A34A"; // Green
       case "cancle":
-        return "#EF4444"; // Red
+        return "#DC2626"; // Red
       default:
-        return "#9CA3AF"; // Gray
+        return "#71717A"; // Gray
     }
   };
 
@@ -243,7 +243,7 @@ const OrderHistory = () => {
 
   const styles = {
     container: {
-      backgroundColor: "#1E2433",
+      backgroundColor: "#F5F4F0",
       minHeight: "100vh",
       display: "flex",
       flexDirection: "column",
@@ -252,13 +252,13 @@ const OrderHistory = () => {
       display: "flex",
       alignItems: "center",
       gap: "12px",
-      padding: "20px 16px",
-      borderBottom: "1px solid #2B3041",
+      padding: "16px",
+      borderBottom: "1px solid #E4E4E7",
     },
     backBtn: {
       background: "none",
       border: "none",
-      color: "white",
+      color: "#1A1A1A",
       fontSize: "18px",
       cursor: "pointer",
       padding: "8px",
@@ -267,10 +267,11 @@ const OrderHistory = () => {
       justifyContent: "center",
     },
     headerTitle: {
-      color: "white",
+      color: "#1A1A1A",
       fontSize: "18px",
       fontWeight: "600",
       margin: 0,
+      letterSpacing: "-0.2px",
     },
     content: {
       flex: 1,
@@ -278,10 +279,11 @@ const OrderHistory = () => {
       overflowY: "auto",
     },
     orderCard: {
-      backgroundColor: "#2B3041",
-      borderRadius: "16px",
+      backgroundColor: "#FFFFFF",
+      borderRadius: "12px",
       padding: "16px",
-      marginBottom: "16px",
+      marginBottom: "12px",
+      border: "1px solid #E4E4E7",
     },
     orderHeader: {
       display: "flex",
@@ -289,14 +291,14 @@ const OrderHistory = () => {
       alignItems: "center",
       marginBottom: "12px",
       paddingBottom: "12px",
-      borderBottom: "1px solid #3B4256",
+      borderBottom: "1px solid #F4F4F5",
     },
     orderDate: {
-      color: "#9CA3AF",
+      color: "#71717A",
       fontSize: "13px",
     },
     orderId: {
-      color: "#6B7280",
+      color: "#A1A1AA",
       fontSize: "11px",
       marginTop: "4px",
       fontFamily: "monospace",
@@ -316,7 +318,7 @@ const OrderHistory = () => {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      padding: "8px 0",
+      padding: "6px 0",
     },
     itemLeft: {
       display: "flex",
@@ -324,19 +326,19 @@ const OrderHistory = () => {
       gap: "8px",
     },
     itemQty: {
-      backgroundColor: "#3B4256",
-      color: "white",
+      backgroundColor: "#EEEDEA",
+      color: "#1A1A1A",
       padding: "2px 8px",
       borderRadius: "4px",
       fontSize: "12px",
       fontWeight: "600",
     },
     itemName: {
-      color: "white",
+      color: "#1A1A1A",
       fontSize: "14px",
     },
     itemPrice: {
-      color: "#9CA3AF",
+      color: "#71717A",
       fontSize: "14px",
     },
     orderFooter: {
@@ -344,15 +346,15 @@ const OrderHistory = () => {
       justifyContent: "space-between",
       alignItems: "center",
       paddingTop: "12px",
-      borderTop: "1px solid #3B4256",
+      borderTop: "1px solid #F4F4F5",
     },
     tableInfo: {
-      color: "#9CA3AF",
+      color: "#71717A",
       fontSize: "13px",
     },
     orderTotal: {
-      color: "#F59E0B",
-      fontSize: "18px",
+      color: "#1A1A1A",
+      fontSize: "17px",
       fontWeight: "700",
     },
     emptyState: {
@@ -361,17 +363,18 @@ const OrderHistory = () => {
       alignItems: "center",
       justifyContent: "center",
       padding: "60px 20px",
-      color: "#9CA3AF",
+      color: "#71717A",
       textAlign: "center",
     },
     emptyIcon: {
       fontSize: "48px",
       marginBottom: "16px",
-      opacity: 0.5,
+      opacity: 0.4,
     },
     emptyText: {
       fontSize: "16px",
       marginBottom: "8px",
+      color: "#1A1A1A",
     },
     emptySubtext: {
       fontSize: "14px",
@@ -389,7 +392,7 @@ const OrderHistory = () => {
       alignItems: "center",
       justifyContent: "center",
       padding: "60px 20px",
-      color: "#9CA3AF",
+      color: "#71717A",
       textAlign: "center",
     },
     pagination: {
@@ -401,27 +404,27 @@ const OrderHistory = () => {
       marginTop: "8px",
     },
     pageBtn: {
-      width: "40px",
-      height: "40px",
-      borderRadius: "10px",
-      border: "none",
-      backgroundColor: "#2B3041",
-      color: "white",
-      fontSize: "16px",
+      width: "38px",
+      height: "38px",
+      borderRadius: "8px",
+      border: "1px solid #E4E4E7",
+      backgroundColor: "#FFFFFF",
+      color: "#1A1A1A",
+      fontSize: "14px",
       cursor: "pointer",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      transition: "background-color 0.2s",
+      transition: "background-color 0.15s",
     },
     pageBtnDisabled: {
-      width: "40px",
-      height: "40px",
-      borderRadius: "10px",
-      border: "none",
-      backgroundColor: "#2B3041",
-      color: "#4B5563",
-      fontSize: "16px",
+      width: "38px",
+      height: "38px",
+      borderRadius: "8px",
+      border: "1px solid #E4E4E7",
+      backgroundColor: "#F5F4F0",
+      color: "#A1A1AA",
+      fontSize: "14px",
       cursor: "not-allowed",
       display: "flex",
       alignItems: "center",
@@ -429,8 +432,8 @@ const OrderHistory = () => {
       opacity: 0.5,
     },
     pageInfo: {
-      color: "#9CA3AF",
-      fontSize: "14px",
+      color: "#71717A",
+      fontSize: "13px",
       minWidth: "100px",
       textAlign: "center",
     },

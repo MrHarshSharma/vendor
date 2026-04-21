@@ -1,49 +1,47 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Mitr:wght@200;300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 
 body {
-    font-family: "Mitr", sans-serif !important;
+    font-family: "Inter", sans-serif !important;
     margin: 0;
-    /* overflow: hidden; */
-  } 
+  }
 
 .app-extralight {
-    font-family: "Mitr", sans-serif;
-    font-weight: 200;
-    font-style: normal;
-  }
-  
-  .app-light, span, input.ant-input, .ant-select, button.ant-button {
-    font-family: "Mitr", sans-serif;
+    font-family: "Inter", sans-serif;
     font-weight: 300;
     font-style: normal;
-    font-size: 15px;
   }
-  
-  .app-regular, label {
-    font-family: "Mitr", sans-serif;
+
+  .app-light, span, input.ant-input, .ant-select, button.ant-button {
+    font-family: "Inter", sans-serif;
     font-weight: 400;
     font-style: normal;
-    font-size: 20px;
+    font-size: 14px;
   }
-  
+
+  .app-regular, label {
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 16px;
+  }
+
   .app-medium {
-    font-family: "Mitr", sans-serif;
+    font-family: "Inter", sans-serif;
     font-weight: 500;
     font-style: normal;
   }
-  
+
   .app-semibold {
-    font-family: "Mitr", sans-serif;
+    font-family: "Inter", sans-serif;
     font-weight: 600;
     font-style: normal;
   }
-  
+
   .app-bold {
-    font-family: "Mitr", sans-serif;
+    font-family: "Inter", sans-serif;
     font-weight: 700;
     font-style: normal;
   }
-  
- 
+
