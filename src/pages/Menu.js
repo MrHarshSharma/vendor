@@ -257,11 +257,18 @@ function Menu() {
           {/* Header */}
           <div className="menu-header">
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {storeDetails?.restaurantName && (
-                <span style={{ fontSize: '17px', fontWeight: '700', color: '#1A1A1A', letterSpacing: '-0.3px' }}>
-                  {storeDetails.restaurantName}
-                </span>
-              )}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <img
+                  src="/clientlogo.jpg"
+                  alt="logo"
+                  style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover' }}
+                />
+                {storeDetails?.restaurantName && (
+                  <span style={{ fontSize: '17px', fontWeight: '700', color: '#1A1A1A', letterSpacing: '-0.3px' }}>
+                    {storeDetails.restaurantName}
+                  </span>
+                )}
+              </div>
               <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Switch

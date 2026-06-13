@@ -1,6 +1,9 @@
 import { message, Spin } from "antd";
 import React, { useEffect, useState } from "react";
-import { db } from "../firebase/setup";
+import { db, auth, provider } from "../firebase/setup";
+import { signInWithPopup } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import GoogleButton from "react-google-button";
 import {
   collection,
   query,
@@ -39,7 +42,33 @@ const OrderHistory = () => {
   const { storeId } = useParams();
   const storeDetails = useSelector((state) => state.storeReducer.store);
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+
+  const signInWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const firebaseUser = result.user;
+      const customerRef = doc(db, "customer", `customer_${Date.now()}`);
+
+      const userData = {
+        storeUser: storeId,
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        displayName: firebaseUser.displayName,
+        photoURL: firebaseUser.photoURL,
+        createdAt: new Date(),
+      };
+
+      await setDoc(customerRef, userData);
+
+      localStorage.setItem("token", result.user.accessToken);
+      localStorage.setItem("user", JSON.stringify(userData));
+      setUser(userData);
+    } catch (error) {
+      console.error("Error signing in with Google:", error);
+      message.error("Failed to sign in. Please try again.");
+    }
+  };
 
   const totalPages = Math.ceil(totalOrders / ORDERS_PER_PAGE);
 
@@ -462,6 +491,13 @@ const OrderHistory = () => {
               <div style={styles.emptyText}>Please login to view your orders</div>
               <div style={styles.emptySubtext}>
                 Sign in with Google to see your order history
+              </div>
+              <div style={{ marginTop: "20px", width: "100%", padding: "0 20px", boxSizing: "border-box" }}>
+                <GoogleButton
+                  label="Sign in with Google"
+                  onClick={signInWithGoogle}
+                  style={{ borderRadius: "12px", overflow: "hidden", width: "100%" }}
+                />
               </div>
             </div>
           ) : orders.length === 0 ? (
