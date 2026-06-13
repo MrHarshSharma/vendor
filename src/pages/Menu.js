@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import AppLayout from "./AppLayout";
 import {
   MinusOutlined, PlusOutlined, ShoppingOutlined, DeleteOutlined,
@@ -37,6 +37,8 @@ function Menu() {
   const [activeCategory, setActiveCategory] = useState("Categories");
   const [showVeg, setShowVeg] = useState(true);
   const [showNonVeg, setShowNonVeg] = useState(true);
+  const isScrollingToSection = useRef(false);
+  const categoryTabsRef = useRef(null);
 
   // Drawer State & Cart State
   const [cartDrawerVisible, setCartDrawerVisible] = useState(false);
@@ -63,7 +65,7 @@ function Menu() {
         setStoreDetails(data);
         dispatch(addStore(data));
         if (data.menu && Object.keys(data.menu).length > 0) {
-          setActiveCategory(Object.keys(data.menu)[0]);
+          setActiveCategory(Object.keys(data.menu).sort((a, b) => a.localeCompare(b))[0]);
         }
       } else {
         console.log("No such document!");
@@ -230,7 +232,7 @@ function Menu() {
   const scrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
     if (section) {
-      // Offset for sticky header
+      isScrollingToSection.current = true;
       const headerOffset = 100;
       const elementPosition = section.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
@@ -240,10 +242,44 @@ function Menu() {
         behavior: "smooth"
       });
       setActiveCategory(sectionId);
+      scrollTabIntoView(sectionId);
+      setTimeout(() => { isScrollingToSection.current = false; }, 800);
     }
   };
 
+  const scrollTabIntoView = useCallback((cat) => {
+    if (!categoryTabsRef.current) return;
+    const tab = categoryTabsRef.current.querySelector(`[data-category="${cat}"]`);
+    if (tab) {
+      tab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+  }, []);
 
+  // Observe category sections to highlight active tab on scroll
+  useEffect(() => {
+    if (!storeDetails?.menu) return;
+    const categories = Object.keys(storeDetails.menu).sort((a, b) => a.localeCompare(b));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (isScrollingToSection.current) return;
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveCategory(entry.target.id);
+            scrollTabIntoView(entry.target.id);
+            break;
+          }
+        }
+      },
+      { rootMargin: '-120px 0px -60% 0px', threshold: 0 }
+    );
+
+    categories.forEach((cat) => {
+      const el = document.getElementById(cat);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [storeDetails?.menu, scrollTabIntoView]);
 
   // Calculate Total (Price * Quantity)
   const cartTotal = cart.reduce((acc, item) => acc + (parseFloat(item.price) * item.quantity), 0);
@@ -315,10 +351,11 @@ function Menu() {
 
           {/* Horizontal Category Tabs */}
           {storeDetails?.menu && (
-            <div className="category-tabs">
-              {Object.keys(storeDetails.menu).map((cat) => (
+            <div className="category-tabs" ref={categoryTabsRef}>
+              {Object.keys(storeDetails.menu).sort((a, b) => a.localeCompare(b)).map((cat) => (
                 <button
                   key={cat}
+                  data-category={cat}
                   className={`category-tab ${activeCategory === cat ? 'active' : ''}`}
                   onClick={() => scrollToSection(cat)}
                 >
@@ -334,7 +371,7 @@ function Menu() {
           <div className="menu-container">
             {/* Grid Content */}
             {storeDetails.menu && (() => {
-              const categories = Object.keys(storeDetails.menu);
+              const categories = Object.keys(storeDetails.menu).sort((a, b) => a.localeCompare(b));
               let totalVisible = 0;
 
               const rendered = categories.map((category) => {

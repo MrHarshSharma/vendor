@@ -38,7 +38,7 @@ const MenuItem = ({ item, storeDetails }) => {
         <div>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
             <div className={`diet-icon ${item.veg_nonveg === 'Veg' || item.veg_nonveg === 'veg' || item.veg_nonveg === true ? 'veg' : 'non-veg'}`}
-              style={{ marginTop: '3px', flexShrink: 0 }}>
+              style={{flexShrink: 0 }}>
               <div className="diet-dot"></div>
             </div>
             <div className="card-title">{item.name}</div>
@@ -46,7 +46,7 @@ const MenuItem = ({ item, storeDetails }) => {
           <div className="card-desc">{item.description}</div>
 
           {/* Metadata: Servings & Time */}
-          <div style={{ display: 'flex', gap: '12px', marginBottom: '8px', fontSize: '11px', color: '#71717A' }}>
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '4px', fontSize: '11px', color: '#71717A' }}>
             {item.servings && (
               <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <BiDish style={{ color: '#71717A' }} /> {item.servings}
